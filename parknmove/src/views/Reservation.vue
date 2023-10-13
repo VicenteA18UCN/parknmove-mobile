@@ -34,6 +34,18 @@
   </template>
   
   <script>
+  import {
+  IonApp,
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonButtons,
+  IonButton,
+  IonContent,
+  IonRouterOutlet,
+} from '@ionic/vue';
+import { ref } from 'vue';
+import { useRouter } from 'vue-router'; // Si estás utilizando Vue Router
   export default {
     data() {
       return {
