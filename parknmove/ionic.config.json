@@ -1,7 +1,0 @@
-{
-  "name": "parknmove",
-  "integrations": {
-    "capacitor": {}
-  },
-  "type": "vue-vite"
-}
