@@ -33,11 +33,14 @@ import {
 } from "../../components/styles";
 
 import agent from "../../api/agent";
+import { useNavigation } from '@react-navigation/native';
 //Colores
 const { brand, darkLight } = Colors;
 
+
 const Login = ({ navigation }) => {
   const [hidePassword, setHidePassword] = useState(true);
+
 
   const handleLogin = (data) => {
     agent.Login.login(data.email, data.password)
@@ -100,9 +103,9 @@ const Login = ({ navigation }) => {
                 <ButtonText>Iniciar Sesión</ButtonText>
               </StyledButton>
               <Line />
-              {/* <StyledButton onPress={(event) => navigation.navigate("Signup")}>
+              <StyledButton onPress={(event) => navigation.navigate("Register")}>
                 <ButtonText>Registrate</ButtonText>
-              </StyledButton> */}
+              </StyledButton>
               <ExtraView>
                 <ExtraText>Te olvidaste de la contraseña?</ExtraText>
                 <TextLink>
