@@ -11,6 +11,14 @@ const requests = {
   delete: (url) => axios.delete(url).then(responseBody),
 };
 
+const Parking = {
+  // Función para obtener todos los datos del estacionamiento
+  getAllParkingData: () => requests.get("/parking"),
+
+  // Otras funciones relacionadas con estacionamientos pueden ir aquí
+};
+
+
 const Login = {
   login: (email, password) => requests.post("user/login", { email, password }),
   register: (name, lastname, email, password, priority) =>
@@ -25,6 +33,7 @@ const Login = {
 
 const agent = {
   Login,
+  Parking,
 };
 
 export default agent;
