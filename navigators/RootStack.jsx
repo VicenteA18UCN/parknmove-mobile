@@ -10,7 +10,7 @@ const Stack = createStackNavigator();
 //Import screens
 import Login from "../app/auth/Login";
 import Register from "../app/auth/Register";
-// import Welcome from "./../screens/Welcome";
+import Reserva from "../app/reserves/Reservation";
 
 const RootStack = () => {
   return (
@@ -23,10 +23,11 @@ const RootStack = () => {
           headerTitle: "",
           headerLeftContainerStyle: { paddingLeft: 20 },
         }}
-        initialRouteName="Login"
+        initialRouteName="Reserva"
       >
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Register" component={Register} />
+        <Stack.Screen name="Reserva" component={Reserva} />
       </Stack.Navigator>
     </NavigationContainer> 
   );
