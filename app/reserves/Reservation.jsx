@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, Image, StyleSheet } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
 import {
   StyledContainer,
@@ -13,6 +13,10 @@ import agent from "../../api/agent";
 
 const Reservation = ({ route }) => {
   const [parkingData, setParkingData] = useState(null);
+  const [user_id, setUser_id] = useState(1);
+  const [entry_time, setEntryTime] = useState(new Date());
+  const [extraFee, setExtraFee] = useState(400);
+  const [reservationCreated, setReservationCreated] = useState(false);
 
   const fetchParkingData = async () => {
     try {
@@ -26,9 +30,54 @@ const Reservation = ({ route }) => {
     }
   };
 
+  const fetchExtraFee = async () => {
+    try {
+      const parkingId = parkingData.id;
+      const response = await agent.Parking.calculateExtraFee(parkingId);
+      if (response && response.ExtraFee) {
+        setExtraFee(response.ExtraFee);
+      }
+    } catch (error) {
+      setExtraFee(500);
+      console.error("Error al obtener el extra_fee:", error);
+    }
+  };
+
   useEffect(() => {
     fetchParkingData();
   }, []);
+
+  useEffect(() => {
+    if (parkingData) {
+      fetchExtraFee();
+    }
+  }, [parkingData]);
+
+  const handleReservation = async () => {
+    const parking_id = parkingData.id;
+    const total_price = 2000;
+    console.log("User ID:", user_id);
+
+    try {
+      const response = await agent.Reservation.createReservation({
+        user_id: 1,
+        parking_id,
+        total_price,
+        entry_time,
+        exit_time: null,
+        extra_fee: extraFee, // Utiliza el valor calculado de extra_fee
+      });
+
+      if (response) {
+        setReservationCreated(true);
+      } else {
+        console.error("Error al crear la reserva 1.");
+      }
+    } catch (error) {
+      console.error("Error al crear la reserva 2:", error);
+      console.log(response);
+    }
+  };
 
   return (
     <StyledContainer>
@@ -38,15 +87,22 @@ const Reservation = ({ route }) => {
             <PageLogo source={require("../../assets/icon.png")} />
             <PageTitle style={styles.title}>{parkingData.name}</PageTitle>
             <SubTitle style={styles.subTitle}>{parkingData.address}</SubTitle>
+            <Text style={styles.capacityText}>
+              Capacidad: {parkingData.floor_count * parkingData.places_per_floor}
+            </Text>
             <View style={styles.priceContainer}>
               <FontAwesome5 name="money-bill-wave" size={24} color="#007BFF" />
               <Text style={styles.priceText}>
-                Base Price: ${parkingData.base_price}
+                Precio por hora: ${extraFee}
               </Text>
             </View>
-            <StyledButton style={styles.button}>
-              <Text style={styles.buttonText}>Reservar</Text>
-            </StyledButton>
+            {!reservationCreated ? (
+              <StyledButton style={styles.button} onPress={handleReservation}>
+                <Text style={styles.buttonText}>Reservar</Text>
+              </StyledButton>
+            ) : (
+              <Text>¡Reserva creada con éxito!</Text>
+            )}
           </>
         ) : (
           <Text>Cargando información del estacionamiento...</Text>
@@ -66,6 +122,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#888",
     marginBottom: 20,
+  },
+  capacityText: {
+    fontSize: 16,
+    marginBottom: 10,
   },
   priceContainer: {
     flexDirection: "row",
