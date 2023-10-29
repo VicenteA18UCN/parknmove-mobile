@@ -106,7 +106,7 @@ const Login = ({ navigation }) => {
               <ExtraView>
                 <ExtraText>No tienes una cuenta?</ExtraText>
                 <TextLink>
-                  <TextLinkContent> Registrate!</TextLinkContent>
+                  <TextLinkContent onPress={(event) => navigation.navigate("Register")}> Registrate!</TextLinkContent>
                 </TextLink>
               </ExtraView>
             </StyledFormArea>
