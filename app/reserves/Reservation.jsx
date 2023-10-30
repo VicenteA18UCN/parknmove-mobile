@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, Image, StyleSheet } from "react-native";
-import { FontAwesome5 } from "@expo/vector-icons";
+import agent from "../../api/agent";
+import { useNavigation } from "@react-navigation/native";
 import {
   StyledContainer,
   InnerContainer,
@@ -9,9 +10,6 @@ import {
   SubTitle,
   StyledButton,
 } from "../../components/styles";
-import agent from "../../api/agent";
-import { useNavigation } from '@react-navigation/native';
-
 
 const Reservation = ({ route }) => {
   const [parkingData, setParkingData] = useState(null);
@@ -19,6 +17,7 @@ const Reservation = ({ route }) => {
   const [entry_time, setEntryTime] = useState(new Date());
   const [extraFee, setExtraFee] = useState(400);
   const [reservationCreated, setReservationCreated] = useState(false);
+  const [occupiedSpaces, setOccupiedSpaces] = useState(0);
   const navigation = useNavigation();
 
   const fetchParkingData = async () => {
@@ -46,6 +45,18 @@ const Reservation = ({ route }) => {
     }
   };
 
+  const fetchOccupiedSpaces = async () => {
+    try {
+      const response = await agent.Parking.getOccupiedSpaces();
+      console.log(response);
+      if (response) {
+        setOccupiedSpaces(response);
+      }
+    } catch (error) {
+      console.error("Error al obtener los espacios ocupados:", error);
+    }
+  };
+
   useEffect(() => {
     fetchParkingData();
   }, []);
@@ -53,13 +64,35 @@ const Reservation = ({ route }) => {
   useEffect(() => {
     if (parkingData) {
       fetchExtraFee();
+      fetchOccupiedSpaces();
     }
   }, [parkingData]);
+
+  const getEmotion = () => {
+    const totalSpaces = parkingData.floor_count * parkingData.places_per_floor;
+    const occupancyPercentage = (occupiedSpaces / totalSpaces) * 100;
+    if (occupancyPercentage < 30) {
+      return {
+        emoji: "😄", // Carita feliz
+        text: "Bastante vacío",
+      };
+    } else if (occupancyPercentage >= 30 && occupancyPercentage <= 70) {
+      return {
+        emoji: "😐", // Carita normal
+        text: "Bastante normal",
+      };
+    } else {
+      return {
+        emoji: "😡", // Carita enojada
+        text: "Bastante lleno",
+      };
+    }
+  };
 
   const handleReservation = async () => {
     const parking_id = parkingData.id;
     const total_price = 2000;
-  
+
     try {
       const response = await agent.Reservation.createReservation({
         user_id: user_id,
@@ -67,20 +100,17 @@ const Reservation = ({ route }) => {
         total_price,
         entry_time,
         exit_time: null,
-        extra_fee: extraFee, // Utiliza el valor calculado de extra_fee
+        extra_fee: extraFee,
       });
-  
+
       if (response) {
-        // Crea un objeto con los datos de la reserva incluyendo los nombres
         const reservationDataInfo = {
           response: response,
-          userName: "John Doe", // Agrega el nombre del usuario
-          parkingName: parkingData.name, // Agrega el nombre del estacionamiento
+          userName: "John Doe",
+          parkingName: parkingData.name,
         };
-        // Redirige a ReservationInfo y pasa los datos de la reserva
-        navigation.navigate('ReservationInfo', { reservationData: reservationDataInfo });
-  
-        // Marca la reserva como creada con éxito
+        navigation.navigate("ReservationInfo", { reservationData: reservationDataInfo });
+
         setReservationCreated(true);
       } else {
         console.error("Error al crear la reserva.");
@@ -91,18 +121,20 @@ const Reservation = ({ route }) => {
   };
 
   return (
-    <StyledContainer>
-      <InnerContainer>
-        {parkingData ? (
-          <>
-            <PageLogo source={require("../../assets/icon.png")} />
-            <PageTitle style={styles.title}>{parkingData.name}</PageTitle>
-            <SubTitle style={styles.subTitle}>{parkingData.address}</SubTitle>
+    <View style={styles.container}>
+      {parkingData ? (
+        <>
+          <View style={styles.emojiContainer}>
+            <Text style={styles.emoji}>{getEmotion().emoji}</Text>
+            <Text style={styles.emotionText}>{getEmotion().text}</Text>
+          </View>
+          <View style={styles.infoContainer}>
+            <Text style={styles.pageTitle}>{parkingData.name}</Text>
+            <Text style={styles.subTitle}>{parkingData.address}</Text>
             <Text style={styles.capacityText}>
-              Capacidad: {parkingData.floor_count * parkingData.places_per_floor}
+              Sitios ocupados: {occupiedSpaces}/{parkingData.floor_count * parkingData.places_per_floor}
             </Text>
             <View style={styles.priceContainer}>
-              <FontAwesome5 name="money-bill-wave" size={24} color="#007BFF" />
               <Text style={styles.priceText}>
                 Precio por hora: ${extraFee}
               </Text>
@@ -114,20 +146,42 @@ const Reservation = ({ route }) => {
             ) : (
               <Text>¡Reserva creada con éxito!</Text>
             )}
-          </>
-        ) : (
-          <Text>Cargando información del estacionamiento...</Text>
-        )}
-      </InnerContainer>
-    </StyledContainer>
+          </View>
+        </>
+      ) : (
+        <Text>Cargando información del estacionamiento...</Text>
+      )}
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  title: {
+  container: {
+    flex: 1,
+
+    alignItems: "center",
+  },
+  emojiContainer: {
+    alignItems: "center",
+    marginTop: 20,
+  },
+  emoji: {
+    fontSize: 60,
+  },
+  emotionText: {
+    fontSize: 20,
+  },
+  infoContainer: {
+    alignItems: "center",
+  },
+  pageLogo: {
+    width: 80,
+    height: 80,
+  },
+  pageTitle: {
     fontSize: 24,
     fontWeight: "bold",
-    marginBottom: 10,
+    marginTop: 10,
   },
   subTitle: {
     fontSize: 16,

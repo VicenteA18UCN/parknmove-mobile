@@ -17,6 +17,9 @@ const Parking = {
 
   // Función para calcular el precio total (Manteniendo tu función original)
   calculateExtraFee: (parkingId) => requests.get(`/calculateExtraFee`),
+
+  // Función para obtener los espacios ocupados
+  getOccupiedSpaces: () => requests.get(`parking/occupiedSpaces`),
   
 };
 
