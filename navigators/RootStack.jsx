@@ -7,10 +7,11 @@ const { primary, tertiary } = Colors;
 
 const Stack = createStackNavigator();
 
-//Import screens
+// Importa las pantallas necesarias
 import Login from "../app/auth/Login";
 import Register from "../app/auth/Register";
 import Reserva from "../app/reserves/Reservation";
+import ReservationInfo from "../app/reserves/ReservationInfo"; // Importa ReservationInfo.jsx
 
 const RootStack = () => {
   return (
@@ -28,8 +29,9 @@ const RootStack = () => {
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Register" component={Register} />
         <Stack.Screen name="Reserva" component={Reserva} />
+        <Stack.Screen name="ReservationInfo" component={ReservationInfo} />
       </Stack.Navigator>
-    </NavigationContainer> 
+    </NavigationContainer>
   );
 };
 

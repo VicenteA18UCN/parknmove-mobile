@@ -15,7 +15,16 @@ const Parking = {
   // Función para obtener todos los datos del estacionamiento
   getAllParkingData: () => requests.get("/parking"),
 
-  // Otras funciones relacionadas con estacionamientos pueden ir aquí
+  // Función para calcular el precio total (Manteniendo tu función original)
+  calculateExtraFee: (parkingId) => requests.get(`/calculateExtraFee`),
+
+  // Función para obtener los espacios ocupados
+  getOccupiedSpaces: () => requests.get(`parking/occupiedSpaces`),
+  
+};
+
+const Reservation = { 
+  createReservation: (reservationData) => requests.post("/reservations", reservationData),
 };
 
 
@@ -34,6 +43,7 @@ const Login = {
 const agent = {
   Login,
   Parking,
+  Reservation,
 };
 
 export default agent;
