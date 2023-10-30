@@ -10,6 +10,8 @@ import {
   StyledButton,
 } from "../../components/styles";
 import agent from "../../api/agent";
+import { useNavigation } from '@react-navigation/native';
+
 
 const Reservation = ({ route }) => {
   const [parkingData, setParkingData] = useState(null);
@@ -17,6 +19,7 @@ const Reservation = ({ route }) => {
   const [entry_time, setEntryTime] = useState(new Date());
   const [extraFee, setExtraFee] = useState(400);
   const [reservationCreated, setReservationCreated] = useState(false);
+  const navigation = useNavigation();
 
   const fetchParkingData = async () => {
     try {
@@ -56,26 +59,34 @@ const Reservation = ({ route }) => {
   const handleReservation = async () => {
     const parking_id = parkingData.id;
     const total_price = 2000;
-    console.log("User ID:", user_id);
-
+  
     try {
       const response = await agent.Reservation.createReservation({
-        user_id: 1,
+        user_id: user_id,
         parking_id,
         total_price,
         entry_time,
         exit_time: null,
         extra_fee: extraFee, // Utiliza el valor calculado de extra_fee
       });
-
+  
       if (response) {
+        // Crea un objeto con los datos de la reserva incluyendo los nombres
+        const reservationDataInfo = {
+          response: response,
+          userName: "John Doe", // Agrega el nombre del usuario
+          parkingName: parkingData.name, // Agrega el nombre del estacionamiento
+        };
+        // Redirige a ReservationInfo y pasa los datos de la reserva
+        navigation.navigate('ReservationInfo', { reservationData: reservationDataInfo });
+  
+        // Marca la reserva como creada con éxito
         setReservationCreated(true);
       } else {
-        console.error("Error al crear la reserva 1.");
+        console.error("Error al crear la reserva.");
       }
     } catch (error) {
-      console.error("Error al crear la reserva 2:", error);
-      console.log(response);
+      console.error("Error al crear la reserva:", error);
     }
   };
 
