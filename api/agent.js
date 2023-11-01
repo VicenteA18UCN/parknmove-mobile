@@ -11,6 +11,23 @@ const requests = {
   delete: (url) => axios.delete(url).then(responseBody),
 };
 
+const Parking = {
+  // Función para obtener todos los datos del estacionamiento
+  getAllParkingData: () => requests.get("/parking"),
+
+  // Función para calcular el precio total (Manteniendo tu función original)
+  calculateExtraFee: (parkingId) => requests.get(`/calculateExtraFee`),
+
+  // Función para obtener los espacios ocupados
+  getOccupiedSpaces: () => requests.get(`parking/occupiedSpaces`),
+  
+};
+
+const Reservation = { 
+  createReservation: (reservationData) => requests.post("/reservations", reservationData),
+};
+
+
 const Login = {
   login: (email, password) => requests.post("user/login", { email, password }),
   register: (name, lastname, email, password, priority) =>
@@ -25,6 +42,8 @@ const Login = {
 
 const agent = {
   Login,
+  Parking,
+  Reservation,
 };
 
 export default agent;

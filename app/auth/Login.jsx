@@ -35,7 +35,7 @@ import {
 import agent from "../../api/agent";
 import { useNavigation } from '@react-navigation/native';
 //Colores
-const { brand, darkLight } = Colors;
+const { brand, darkLight,green } = Colors;
 
 
 const Login = ({ navigation }) => {
@@ -103,13 +103,10 @@ const Login = ({ navigation }) => {
                 <ButtonText>Iniciar Sesión</ButtonText>
               </StyledButton>
               <Line />
-              <StyledButton onPress={(event) => navigation.navigate("Register")}>
-                <ButtonText>Registrate</ButtonText>
-              </StyledButton>
               <ExtraView>
-                <ExtraText>Te olvidaste de la contraseña?</ExtraText>
+                <ExtraText>No tienes una cuenta?</ExtraText>
                 <TextLink>
-                  <TextLinkContent> Recuperar contraseña</TextLinkContent>
+                  <TextLinkContent onPress={(event) => navigation.navigate("Register")}> Registrate!</TextLinkContent>
                 </TextLink>
               </ExtraView>
             </StyledFormArea>
@@ -131,7 +128,7 @@ const MyTextInput = ({
   return (
     <View>
       <LeftIcon>
-        <Octicons name={icon} size={24} color={brand} />
+        <Octicons name={icon} size={24} color={green} />
       </LeftIcon>
       <StyledInputLabel>{label}</StyledInputLabel>
       <StyledTextInput {...props} />

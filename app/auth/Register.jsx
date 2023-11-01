@@ -33,7 +33,7 @@ import {
 
 import agent from "../../api/agent";
 //Colores
-const { brand, darkLight } = Colors;
+const { brand, darkLight, green } = Colors;
 
 const Register = ( ) => {
   const [hidePassword, setHidePassword] = useState(true);
@@ -50,9 +50,7 @@ const Register = ( ) => {
   };
   const completeData = (data) => {
     console.log(completeData);
-    agent.Login.register(data.name, data.lastname, data.email, data.password, 1);
-    console.log("aca toi");
-    axios
+    agent.Login.register(data.name, data.lastname, data.email, data.password, 1)
       .then((response) => {
         console.log(response);
       })
@@ -130,18 +128,17 @@ const Register = ( ) => {
                   value={values.password}
                   secureTextEntry={hidePassword}
                   isPassword={true}
-                  hidePassword={hidePassword}
-                  setHidePassword={setHidePassword}
                 />
 
                 <MyTextInput
                   label="Confirmar Contraseña"
                   icon="lock"
-                  placeholder=""
+                  placeholder="**********"
                   placeholderTextColor={darkLight}
                   onChangeText={handleChange("passwordConfirm")}
                   onBlur={handleBlur("passwordConfirm")}
                   value={values.passwordConfirm}
+                  secureTextEntry={hidePassword}
                   isPassword={true}
                 />
                 <MsgBox></MsgBox>
@@ -151,7 +148,7 @@ const Register = ( ) => {
                 <ExtraView>
                   <ExtraText>Ya estas registrado?</ExtraText>
                   <TextLink>
-                    <TextLinkContent> Inicia Sesión!</TextLinkContent>
+                    <TextLinkContent onPress={(event) => navigation.navigate("Login")}> Inicia Sesión!</TextLinkContent>
                   </TextLink>
                 </ExtraView>
               </StyledFormArea>
@@ -174,19 +171,10 @@ const MyTextInput = ({
   return (
     <View>
       <LeftIcon>
-        <Octicons name={icon} size={24} color={brand} />
+        <Octicons name={icon} size={24} color={green} />
       </LeftIcon>
       <StyledInputLabel>{label}</StyledInputLabel>
       <StyledTextInput {...props} />
-      {isPassword && (
-        <RightIcon onPress={() => setHidePassword(!hidePassword)}>
-          <Ionicons
-            name={hidePassword ? "md-eye-off" : "md-eye"}
-            size={30}
-            color={darkLight}
-          />
-        </RightIcon>
-      )}
     </View>
   );
 };
