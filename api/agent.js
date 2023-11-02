@@ -20,12 +20,18 @@ const Parking = {
 
   // Función para obtener los espacios ocupados
   getOccupiedSpaces: () => requests.get(`parking/occupiedSpaces`),
+
+  getHistory: (userId) => requests.get(`/parking/history/${userId}`, userId),
   
 };
 
 const Reservation = { 
   createReservation: (reservationData) => requests.post("/reservations", reservationData),
 };
+
+
+
+
 
 
 const Login = {
@@ -44,6 +50,7 @@ const agent = {
   Login,
   Parking,
   Reservation,
+  History,
 };
 
 export default agent;
