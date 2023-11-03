@@ -17,10 +17,10 @@ const ReservationHistory = ( ) =>{
       id: 3, user_id:3, parking_id:3, total_price:null,entry_time:"2023-10-30T23:26:03.000Z",exit_time:null,extra_fee:300, direccion: "calle B"
     }
     ,{
-      id: 3, user_id:3, parking_id:3, total_price:null,entry_time:"2023-10-01T23:26:03.000Z",exit_time:null,extra_fee:100, direccion: "calle D"
+      id: 4, user_id:4, parking_id:4, total_price:null,entry_time:"2023-10-01T23:26:03.000Z",exit_time:null,extra_fee:100, direccion: "calle D"
     }
     ,{
-      id: 3, user_id:3, parking_id:3, total_price:null,entry_time:"2022-11-04T23:26:03.000Z",exit_time:null,extra_fee:400, direccion: "calle Z"
+      id: 5, user_id:5, parking_id:5, total_price:null,entry_time:"2022-11-01T23:26:03.000Z",exit_time:null,extra_fee:400, direccion: "calle Z"
     }
 
   ]);
@@ -32,6 +32,7 @@ const ReservationHistory = ( ) =>{
     setInterval(newInterval);
     filterReservations(newInterval);
   };
+
 
   const filterReservations = (interval) => {
     if (interval === 'todos') {
@@ -55,8 +56,6 @@ const ReservationHistory = ( ) =>{
       setFilteredReservations(filtered);
     }
   };
-
-
   
   /** 
   useEffect(() => {
@@ -80,7 +79,7 @@ const ReservationHistory = ( ) =>{
     <div>
       <h1 style={{ textAlign: 'center' }}>Historial de Reservas</h1>
       <div style={{ textAlign: 'center' }}>
-      <button onClick={() => changeInterval('todos')}>Todos</button>
+          <button onClick={() => changeInterval('todos')}>Todos</button>
           <button onClick={() => changeInterval('ultimoMes')}>Último Mes</button>
           <button onClick={() => changeInterval('ultimaSemana')}>Última Semana</button>
           <button onClick={() => changeInterval('ultimoAnio')}>Último Año</button>
