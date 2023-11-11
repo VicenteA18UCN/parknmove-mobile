@@ -6,25 +6,8 @@ import agent from "../../api/agent";
 
 
 const ReservationHistory = ( ) =>{
-  const [Reservations, setReservations] = useState([
-    {
-      id: 1, user_id:1, parking_id:1, total_price:null,entry_time:"2023-11-02T23:26:03.000Z",exit_time:null,extra_fee:500, direccion: "calle A"
-    },
-    {
-      id: 2, user_id:2, parking_id:2, total_price:null,entry_time:"2023-10-02T23:26:03.000Z",exit_time:null,extra_fee:200, direccion: "calle C"
-    }
-    ,{
-      id: 3, user_id:3, parking_id:3, total_price:null,entry_time:"2023-10-30T23:26:03.000Z",exit_time:null,extra_fee:300, direccion: "calle B"
-    }
-    ,{
-      id: 4, user_id:4, parking_id:4, total_price:null,entry_time:"2023-10-01T23:26:03.000Z",exit_time:null,extra_fee:100, direccion: "calle D"
-    }
-    ,{
-      id: 5, user_id:5, parking_id:5, total_price:null,entry_time:"2022-11-01T23:26:03.000Z",exit_time:null,extra_fee:400, direccion: "calle Z"
-    }
-
-  ]);
-  const [interval, setInterval] = useState('ultimoMes');
+  const [Reservations, setReservations] = useState([]);
+  const [interval, setInterval] = useState('todos');
 
   const [filteredReservations, setFilteredReservations] = useState(Reservations);
 
@@ -32,6 +15,7 @@ const ReservationHistory = ( ) =>{
     setInterval(newInterval);
     filterReservations(newInterval);
   };
+
 
 
   const filterReservations = (interval) => {
@@ -57,24 +41,26 @@ const ReservationHistory = ( ) =>{
     }
   };
   
-  /** 
-  useEffect(() => {
-    fetchHistory();
-  }, []);
-
-
   const fetchHistory = async () => {
     try {
       const response = await agent.Parking.getHistory(1);
-      console.log(response);
-      if (response) {
-        setReservations(response);
+      console.log(response.history);
+      console.log(Reservations.length);
+      console.log(Reservations, "Reservations")
+      if (Reservations.length == 0) {
+        setReservations(response.history);
+        console.log(Reservations);
       }
-      console.log(Reservations);
+      console.log("separador");
     } catch (error) {
       console.error("Error al obtener el historial:", error);
     }
-  }*/
+  };
+
+useEffect(() => { fetchHistory(); }, []);
+
+
+
   return (
     <div>
       <h1 style={{ textAlign: 'center' }}>Historial de Reservas</h1>
@@ -90,21 +76,25 @@ const ReservationHistory = ( ) =>{
             <tr>
               <th>Lugar</th>
               <th>Fecha</th>
+              <th>Hora</th>
               <th>Valor</th>
             </tr>
           </thead>
           <tbody>
-            {filteredReservations.map((Reservation) => (
-              <tr key={Reservation.id}>
-                <td>{Reservation.direccion}</td>
-                <td>{Reservation.entry_time}</td>
-                <td>{Reservation.extra_fee}</td>
-              </tr>
-            ))}
+          {filteredReservations.map((Reservation) => (
+            <tr key={Reservation.id}>
+              <td>{Reservation.direccion}</td>
+              <td>{new Date(Reservation.entry_time).toLocaleDateString()}</td>
+              <td>{new Date(Reservation.entry_time).toLocaleTimeString()}</td>
+              <td>{Reservation.extra_fee}</td>
+            </tr>
+          ))}
           </tbody>
         </table>
       ) : (
-        <p>No reservations found.</p>
+        <div style={{ textAlign: 'center' }}>
+          <p>No reservations found.</p>
+          </div>
       )}
     </div>
   );
