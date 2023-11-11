@@ -12,6 +12,7 @@ import Login from "../app/auth/Login";
 import Register from "../app/auth/Register";
 import Reserva from "../app/reserves/Reservation";
 import ReservationInfo from "../app/reserves/ReservationInfo"; // Importa ReservationInfo.jsx
+import Payment from "../app/reserves/Payment";
 
 const RootStack = () => {
   return (
@@ -24,12 +25,13 @@ const RootStack = () => {
           headerTitle: "",
           headerLeftContainerStyle: { paddingLeft: 20 },
         }}
-        initialRouteName="Reserva"
+        initialRouteName="Login"
       >
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Register" component={Register} />
         <Stack.Screen name="Reserva" component={Reserva} />
         <Stack.Screen name="ReservationInfo" component={ReservationInfo} />
+        <Stack.Screen name="Payment" component={Payment} />
       </Stack.Navigator>
     </NavigationContainer>
   );
