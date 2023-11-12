@@ -1,11 +1,8 @@
-import React, { useState, useEffect, useRef } from "react";
-import { View, Text, Image, StyleSheet } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Text, StyleSheet } from "react-native";
 import agent from "../../api/agent";
-import { useNavigation } from "@react-navigation/native";
-import { useSelector, useDispatch } from "react-redux";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { selectId, selectName, selectLastname } from "../../features/account/index";
-import { logout } from "../../features/account/index";
 import { jwtDecode } from "jwt-decode";
 
 import {
@@ -27,7 +24,15 @@ const Reservation = ({ route }) => {
   const navigation = useNavigation();
   const [userData, setUserData] = useState();
   const [reservationDataInfo, setReservationDataInfo] = useState(null);
+  const { reservationCreatedParam } = route.params ?? {};  
 
+  useEffect(() => {
+
+    if (route.params) {
+      console.log("reserva", route.params);
+      setReservationCreated(route.params.reservationCreatedParam);
+    }
+  }, [route.params]);
 
   useEffect(() => {
     handleGetToken();
@@ -181,7 +186,6 @@ const Reservation = ({ route }) => {
 
   const handleReservation = async () => {
     const parking_id = parkingData.id;
-    console.log(userData.id);
 
     try {
       const status = await agent.Parking.getParkingUserData({ parking_id: parking_id, user_id: userData.id });

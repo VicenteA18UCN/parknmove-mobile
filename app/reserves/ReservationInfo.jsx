@@ -16,19 +16,18 @@ const ReservationInfo = ({ route }) => {
   const { reservationDataInfo } = route.params;
   const navigation = useNavigation();
 
-  console.log("Datos de la reserva:", route.params);
-
   // Formatear la hora de entrada
   const entryTime = new Date(reservationDataInfo.response.entry_time).toLocaleString();
   // Combina toda la información en una cadena que se incluirá en el código QR
-  const qrData = `Usuario: ${reservationDataInfo.userName}\nEstacionamiento: ${reservationDataInfo.parkingName}\nHora de entrada: ${entryTime}\nCosto por hora: $${reservationDataInfo.extra_fee}`;
+  const qrData = `Usuario: ${reservationDataInfo.userName}\nEstacionamiento: ${reservationDataInfo.parkingName}\nHora de entrada: ${entryTime}\nCosto por hora: $${reservationDataInfo.response.extra_fee}`;
 
   //const [user_id, setUser_id] = useState(null);
   const Payment = async () => {
     try {
       const response = await agent.Parking.registerPayment({
-        user_id: reservationDataInfo.user_id
+        user_id: reservationDataInfo.userId
       });
+      navigation.navigate("Payment", { reservationDataInfo: reservationDataInfo });
     } catch (error) {
       console.error("Error al registrar el pago:", error);
     }
@@ -52,15 +51,15 @@ const ReservationInfo = ({ route }) => {
       </View>
       <View style={styles.infoContainer}>
         <Text style={styles.label}>Costo por hora:</Text>
-        <Text style={styles.value}>${reservationDataInfo.extra_fee}</Text>
+        <Text style={styles.value}>${reservationDataInfo.response.extra_fee}</Text>
       </View>
       <View style={styles.space} />
       <View style={styles.qrContainer}>
         <QRCode value={qrData} size={200} />
       </View>
       <View>
-        <StyledButton style={styles.button} onPress={Payment}>
-          <Text onPress={(event) => navigation.navigate("Payment", { reservationDataInfo: reservationDataInfo })} style={styles.buttonText}>Ir a pagar</Text>
+        <StyledButton style={styles.button} onPress={() => Payment()}>
+          <Text style={styles.buttonText}>Ir a pagar</Text>
         </StyledButton>
       </View>
     </View>
