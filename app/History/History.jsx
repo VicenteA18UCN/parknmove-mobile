@@ -29,6 +29,7 @@ import {
 const ReservationHistory = ( ) =>{
   const [Reservations, setReservations] = useState([]);
   const [interval, setInterval] = useState('todos');
+  const [userId, setUserId] = useState(1);
 
   const [filteredReservations, setFilteredReservations] = useState(Reservations);
 
@@ -64,7 +65,7 @@ const ReservationHistory = ( ) =>{
   
   const fetchHistory = async () => {
     try {
-      const response = await agent.Parking.getHistory(1);
+      const response = await agent.Parking.getHistory(userId);
       console.log(response.history);
       console.log(Reservations.length);
       console.log(Reservations, "Reservations")
@@ -89,7 +90,7 @@ useEffect(() => { fetchHistory(); }, []);
   return (
     <div>
       <h1 style={{ textAlign: 'center' }}>Historial de Reservas</h1>
-        <div style={{ textAlign: 'center', display: 'flex', justifyContent: 'center' }}>
+        <div style={{ textAlign: 'center', display: 'flex', justifyContent: 'center' , marginBottom: '20px' }}>
           <StyledButton onPress={() => changeInterval('todos')}style={buttonStyle}>
             <ButtonText>Todos</ButtonText>
           </StyledButton>
@@ -106,11 +107,11 @@ useEffect(() => { fetchHistory(); }, []);
         {filteredReservations.length > 0 ? (
         <table style={{ margin: '0 auto', borderCollapse: 'collapse', width: '80%' }}>
           <thead>
-            <tr>
-              <th>Lugar</th>
-              <th>Fecha</th>
-              <th>Hora</th>
-              <th>Valor</th>
+            <tr style={{ backgroundColor: '#333', color: 'white' }}>
+              <th style={{ border: '1px solid #ccc', padding: '8px', textAlign: 'center' }}>Lugar</th>
+              <th style={{ border: '1px solid #ccc', padding: '8px', textAlign: 'center' }}>Fecha</th>
+              <th style={{ border: '1px solid #ccc', padding: '8px', textAlign: 'center' }}>Hora</th>
+              <th style={{ border: '1px solid #ccc', padding: '8px', textAlign: 'center' }}>Valor</th>
             </tr>
           </thead>
           <tbody>
