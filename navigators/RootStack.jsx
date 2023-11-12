@@ -13,7 +13,10 @@ import Register from "../app/auth/Register";
 import Reserva from "../app/reserves/Reservation";
 import ReservationInfo from "../app/reserves/ReservationInfo"; // Importa ReservationInfo.jsx
 import Payment from "../app/reserves/Payment";
+<<<<<<< HEAD
 import History from "../app/History/History";
+=======
+>>>>>>> remotes/origin/dev
 
 const RootStack = () => {
   return (
@@ -33,7 +36,10 @@ const RootStack = () => {
         <Stack.Screen name="Reserva" component={Reserva} />
         <Stack.Screen name="ReservationInfo" component={ReservationInfo} />
         <Stack.Screen name="Payment" component={Payment} />
+<<<<<<< HEAD
         <Stack.Screen name="History" component={History} />
+=======
+>>>>>>> remotes/origin/dev
       </Stack.Navigator>
     </NavigationContainer>
   );
