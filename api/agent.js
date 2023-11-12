@@ -29,11 +29,6 @@ const Reservation = {
   createReservation: (reservationData) => requests.post("/reservations", reservationData),
 };
 
-
-
-
-
-
 const Login = {
   login: (email, password) => requests.post("user/login", { email, password }),
   register: (name, lastname, email, password, priority) =>
