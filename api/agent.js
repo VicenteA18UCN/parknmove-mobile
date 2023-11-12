@@ -19,7 +19,7 @@ const requests = {
 
 const Parking = {
   // Función para obtener todos los datos del estacionamiento
-  getAllParkingData: () => requests.get(`/parking`),
+  getAllParkingData: () => requests.get(("/parking")),
 
   // Función para calcular el precio total (Manteniendo tu función original)
   calculateExtraFee: (parkingId) => requests.get(`/calculateExtraFee`),
