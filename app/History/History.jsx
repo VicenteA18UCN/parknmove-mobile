@@ -66,14 +66,10 @@ const ReservationHistory = ( ) =>{
   const fetchHistory = async () => {
     try {
       const response = await agent.Parking.getHistory(userId);
-      console.log(response.history);
-      console.log(Reservations.length);
-      console.log(Reservations, "Reservations")
+
       if (Reservations.length == 0) {
         setReservations(response.history);
-        console.log(Reservations);
       }
-      console.log("separador");
     } catch (error) {
       console.error("Error al obtener el historial:", error);
     }
@@ -83,6 +79,10 @@ useEffect(() => { fetchHistory(); }, []);
 
   const buttonStyle = {
     marginRight: '10px', // Ajusta el valor de margen según tus preferencias
+    
+    width: '150px', // Establece el ancho deseado para los botones
+    margin: '5px', // Agrega un pequeño margen entre los botones
+  
   };
 
 
@@ -90,19 +90,23 @@ useEffect(() => { fetchHistory(); }, []);
   return (
     <div>
       <h1 style={{ textAlign: 'center' }}>Historial de Reservas</h1>
-        <div style={{ textAlign: 'center', display: 'flex', justifyContent: 'center' , marginBottom: '20px' }}>
-          <StyledButton onPress={() => changeInterval('todos')}style={buttonStyle}>
-            <ButtonText>Todos</ButtonText>
-          </StyledButton>
-          <StyledButton onPress={() => changeInterval('ultimoMes')}style={buttonStyle}>
-            <ButtonText>Ultimo mes</ButtonText>
-          </StyledButton>
-          <StyledButton onPress={() => changeInterval('ultimaSemana')}style={buttonStyle}>
-            <ButtonText>Ultima semana</ButtonText>
-          </StyledButton>
-          <StyledButton onPress={() => changeInterval('ultimoAnio')}style={buttonStyle}>
-            <ButtonText>Ultimo año</ButtonText>
-          </StyledButton>
+        <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '20px' }}>
+          <div style={{ display: 'flex' }}>
+            <StyledButton onPress={() => changeInterval('todos')} style={buttonStyle}>
+              <ButtonText>Todos</ButtonText>
+            </StyledButton>
+            <StyledButton onPress={() => changeInterval('ultimoMes')} style={buttonStyle}>
+              <ButtonText>Mensual</ButtonText>
+            </StyledButton>
+          </div>
+          <div style={{ display: 'flex' }}>
+            <StyledButton onPress={() => changeInterval('ultimaSemana')} style={buttonStyle}>
+              <ButtonText>Semanal</ButtonText>
+            </StyledButton>
+            <StyledButton onPress={() => changeInterval('ultimoAnio')} style={buttonStyle}>
+              <ButtonText>Anual</ButtonText>
+            </StyledButton>
+          </div>
         </div>
         {filteredReservations.length > 0 ? (
         <table style={{ margin: '0 auto', borderCollapse: 'collapse', width: '80%' }}>
