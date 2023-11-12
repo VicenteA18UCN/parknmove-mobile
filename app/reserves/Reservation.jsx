@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, Image, StyleSheet } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import agent from "../../api/agent";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { jwtDecode } from "jwt-decode";
+
 import {
   StyledContainer,
   InnerContainer,
@@ -13,12 +16,74 @@ import {
 
 const Reservation = ({ route }) => {
   const [parkingData, setParkingData] = useState(null);
-  const [user_id, setUser_id] = useState(1);
+  const [user_id, setUser_id] = useState();
   const [entry_time, setEntryTime] = useState(new Date());
   const [extraFee, setExtraFee] = useState(400);
   const [reservationCreated, setReservationCreated] = useState(false);
   const [occupiedSpaces, setOccupiedSpaces] = useState(0);
   const navigation = useNavigation();
+  const [userData, setUserData] = useState();
+  const [reservationDataInfo, setReservationDataInfo] = useState(null);
+  const { reservationCreatedParam } = route.params ?? {};  
+
+  useEffect(() => {
+
+    if (route.params) {
+      console.log("reserva", route.params);
+      setReservationCreated(route.params.reservationCreatedParam);
+    }
+  }, [route.params]);
+
+  useEffect(() => {
+    handleGetToken();
+  }, []);
+
+  useEffect(() => {
+    // Llamada a la API para obtener la reserva activa del usuario
+    const checkReservation = async () => {
+      try {
+        const user_id = userData.id;
+        const reservationResponse = await agent.Reservation.getReservationByUserId(user_id);
+
+        if (reservationResponse !== null) {
+          setReservationCreated(true);
+        } else {
+          setReservationCreated(false);
+        }
+      } catch (error) {
+        console.error("Error al obtener la reserva:", error);
+      }
+    };
+
+    checkReservation();
+  }, [userData, parkingData]);
+
+  useEffect(() => {
+    fetchParkingData();
+  }, []);
+  
+  useEffect(() => {
+    if (parkingData) {
+      fetchExtraFee();
+      fetchOccupiedSpaces();
+    }
+  }, [parkingData]);
+
+  useEffect(() => {
+    if(parkingData){
+      dataParkingUser();
+    }
+  }, [reservationDataInfo]);
+
+  const handleGetToken = async () => {
+    const dataToken = await AsyncStorage.getItem('AccessToken');
+    if (!dataToken) {
+      navigation.replace('Login');
+    } else {
+      const decoded = jwtDecode(dataToken);
+      setUserData(decoded);
+    }
+  };
 
   const fetchParkingData = async () => {
     try {
@@ -48,7 +113,7 @@ const Reservation = ({ route }) => {
   const fetchOccupiedSpaces = async () => {
     try {
       const response = await agent.Parking.getOccupiedSpaces();
-      console.log(response);
+      //console.log(response);
       if (response) {
         setOccupiedSpaces(response);
       }
@@ -56,17 +121,6 @@ const Reservation = ({ route }) => {
       console.error("Error al obtener los espacios ocupados:", error);
     }
   };
-
-  useEffect(() => {
-    fetchParkingData();
-  }, []);
-
-  useEffect(() => {
-    if (parkingData) {
-      fetchExtraFee();
-      fetchOccupiedSpaces();
-    }
-  }, [parkingData]);
 
   const getEmotion = () => {
     const totalSpaces = parkingData.floor_count * parkingData.places_per_floor;
@@ -89,31 +143,76 @@ const Reservation = ({ route }) => {
     }
   };
 
+  const dataParkingUser = async () => {
+    const parking_id = 1;
+    const user_id = userData.id;
+    try{
+      const status = await agent.Parking.getParkingUserData({ parking_id: parking_id, user_id: user_id });
+      console.log(status);
+      if (status !== null){
+        setReservationDataInfo(status);
+        setReservationCreated(true);
+        return;
+      }
+    } catch (error) {
+      console.error("Error al guardar la información:", error);
+    }
+  }
+
+  const handleGoToReservation = async () => {
+    try {
+      const user_id = userData.id;
+
+      // Llamada a la API para obtener la reserva activa del usuario
+      const reservationResponse = await agent.Reservation.getReservationByUserId(user_id);
+
+      if (reservationResponse !== null) {
+        // Si se encuentra una reserva activa, navega a la pantalla de detalles de la reserva
+        const reservationDataInfo = {
+          response: reservationResponse,
+          userName: userData.name,
+          parkingName: parkingData.name,
+          userId: userData.id,
+        };
+        navigation.navigate("ReservationInfo", { reservationDataInfo });
+      } else {
+        // Si no hay reserva activa, muestra un mensaje al usuario
+        alert("No tienes una reserva activa en este momento.");
+      }
+    } catch (error) {
+      console.error("Error al obtener la reserva:", error);
+    }
+  };
+
   const handleReservation = async () => {
     const parking_id = parkingData.id;
-    const total_price = 2000;
 
     try {
-      const response = await agent.Reservation.createReservation({
-        user_id: user_id,
-        parking_id,
-        total_price,
-        entry_time,
-        exit_time: null,
-        extra_fee: extraFee,
-      });
-
-      if (response) {
-        const reservationDataInfo = {
-          response: response,
-          userName: "John Doe",
-          parkingName: parkingData.name,
-        };
-        navigation.navigate("ReservationInfo", { reservationData: reservationDataInfo });
-
-        setReservationCreated(true);
+      const status = await agent.Parking.getParkingUserData({ parking_id: parking_id, user_id: userData.id });
+      if (status === null){
+        const response = await agent.Reservation.createReservation({
+          user_id: userData.id,
+          parking_id,
+          entry_time,
+          exit_time: null,
+          extra_fee: extraFee,
+        });
+        if (response) {
+          const reservationDataInfo = {
+            response: response,
+            userName: userData.name,
+            parkingName: parkingData.name,
+            userId: userData.id,
+          };
+          navigation.navigate("ReservationInfo", { reservationDataInfo: reservationDataInfo });
+          setReservationDataInfo(status);
+          setReservationCreated(true);
+        } else {
+          console.error("Error al crear la reserva.");
+        }
       } else {
-        console.error("Error al crear la reserva.");
+        handleGoToReservation();
+        return;
       }
     } catch (error) {
       console.error("Error al crear la reserva:", error);
@@ -124,6 +223,11 @@ const Reservation = ({ route }) => {
     <View style={styles.container}>
       {parkingData ? (
         <>
+        <View>
+          <Text>
+            Bienvenido
+          </Text>
+        </View>
           <View style={styles.emojiContainer}>
             <Text style={styles.emoji}>{getEmotion().emoji}</Text>
             <Text style={styles.emotionText}>{getEmotion().text}</Text>
@@ -139,12 +243,17 @@ const Reservation = ({ route }) => {
                 Precio por hora: ${extraFee}
               </Text>
             </View>
-            {!reservationCreated ? (
-              <StyledButton style={styles.button} onPress={handleReservation}>
-                <Text style={styles.buttonText}>Reservar</Text>
+            {reservationCreated ? (
+              <StyledButton style={styles.button} onPress={handleGoToReservation}>                
+                <Text style={styles.buttonText}>Ir a mi reserva</Text>
               </StyledButton>
             ) : (
-              <Text>¡Reserva creada con éxito!</Text>
+              <>
+                <StyledButton style={styles.button} onPress={handleReservation}>                
+                  <Text style={styles.buttonText}>Reservar</Text>
+                </StyledButton>
+                <Text>¡Reserve ahora!</Text>
+              </>
             )}
           </View>
         </>
