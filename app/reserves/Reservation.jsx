@@ -1,11 +1,8 @@
-import React, { useState, useEffect, useRef } from "react";
-import { View, Text, Image, StyleSheet } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Text, StyleSheet } from "react-native";
 import agent from "../../api/agent";
-import { useNavigation } from "@react-navigation/native";
-import { useSelector, useDispatch } from "react-redux";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { selectId, selectName, selectLastname } from "../../features/account/index";
-import { logout } from "../../features/account/index";
 import { jwtDecode } from "jwt-decode";
 
 import {
@@ -27,11 +24,39 @@ const Reservation = ({ route }) => {
   const navigation = useNavigation();
   const [userData, setUserData] = useState();
   const [reservationDataInfo, setReservationDataInfo] = useState(null);
+  const { reservationCreatedParam } = route.params ?? {};  
 
+  useEffect(() => {
+
+    if (route.params) {
+      console.log("reserva", route.params);
+      setReservationCreated(route.params.reservationCreatedParam);
+    }
+  }, [route.params]);
 
   useEffect(() => {
     handleGetToken();
   }, []);
+
+  useEffect(() => {
+    // Llamada a la API para obtener la reserva activa del usuario
+    const checkReservation = async () => {
+      try {
+        const user_id = userData.id;
+        const reservationResponse = await agent.Reservation.getReservationByUserId(user_id);
+
+        if (reservationResponse !== null) {
+          setReservationCreated(true);
+        } else {
+          setReservationCreated(false);
+        }
+      } catch (error) {
+        console.error("Error al obtener la reserva:", error);
+      }
+    };
+
+    checkReservation();
+  }, [userData, parkingData]);
 
   useEffect(() => {
     fetchParkingData();
@@ -120,7 +145,7 @@ const Reservation = ({ route }) => {
 
   const dataParkingUser = async () => {
     const parking_id = 1;
-    const user_id = 2;
+    const user_id = userData.id;
     try{
       const status = await agent.Parking.getParkingUserData({ parking_id: parking_id, user_id: user_id });
       console.log(status);
@@ -134,9 +159,33 @@ const Reservation = ({ route }) => {
     }
   }
 
+  const handleGoToReservation = async () => {
+    try {
+      const user_id = userData.id;
+
+      // Llamada a la API para obtener la reserva activa del usuario
+      const reservationResponse = await agent.Reservation.getReservationByUserId(user_id);
+
+      if (reservationResponse !== null) {
+        // Si se encuentra una reserva activa, navega a la pantalla de detalles de la reserva
+        const reservationDataInfo = {
+          response: reservationResponse,
+          userName: userData.name,
+          parkingName: parkingData.name,
+          userId: userData.id,
+        };
+        navigation.navigate("ReservationInfo", { reservationDataInfo });
+      } else {
+        // Si no hay reserva activa, muestra un mensaje al usuario
+        alert("No tienes una reserva activa en este momento.");
+      }
+    } catch (error) {
+      console.error("Error al obtener la reserva:", error);
+    }
+  };
+
   const handleReservation = async () => {
     const parking_id = parkingData.id;
-    console.log(userData.id);
 
     try {
       const status = await agent.Parking.getParkingUserData({ parking_id: parking_id, user_id: userData.id });
@@ -162,7 +211,7 @@ const Reservation = ({ route }) => {
           console.error("Error al crear la reserva.");
         }
       } else {
-        alert("Ya tienes una reserva activa");
+        handleGoToReservation();
         return;
       }
     } catch (error) {
@@ -194,20 +243,18 @@ const Reservation = ({ route }) => {
                 Precio por hora: ${extraFee}
               </Text>
             </View>
-            {!reservationCreated ? (
-              <StyledButton style={styles.button} onPress={handleReservation}>                
-                <Text style={styles.buttonText}>Reservar</Text>
+            {reservationCreated ? (
+              <StyledButton style={styles.button} onPress={handleGoToReservation}>                
+                <Text style={styles.buttonText}>Ir a mi reserva</Text>
               </StyledButton>
             ) : (
-              <Text>¡Reserva creada con éxito!</Text>
-            )}
-            {reservationCreated ? (
-              <StyledButton style={styles.button} onPress={() => navigation.navigate("ReservationInfo", { reservationDataInfo: reservationDataInfo})}>                
-                <Text style={styles.buttonText}>Ir a mi reservar</Text>
-              </StyledButton>
-              ) : (
+              <>
+                <StyledButton style={styles.button} onPress={handleReservation}>                
+                  <Text style={styles.buttonText}>Reservar</Text>
+                </StyledButton>
                 <Text>¡Reserve ahora!</Text>
-              )}
+              </>
+            )}
           </View>
         </>
       ) : (

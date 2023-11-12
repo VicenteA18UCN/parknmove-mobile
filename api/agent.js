@@ -38,6 +38,7 @@ const Parking = {
 
 const Reservation = { 
   createReservation: (reservationData) => requests.post("/reservations", reservationData),
+  getReservationByUserId: (user_id) => requests.get(`/reservations/user/${user_id}`),
 };
 
 const Login = {

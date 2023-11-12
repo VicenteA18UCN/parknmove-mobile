@@ -15,25 +15,32 @@ const Payment = ({ route }) => {
 
   const { reservationDataInfo } = route.params;
   const navigation = useNavigation();
+  const [parkingUserData, setParkingData] = useState(null);
+
 
   //console.log("Datos de la reserva:", route.params);
 
-  const [parkingUserData, setParkingData] = useState(null);
+  //const entryTime = new Date(reservationDataInfo.response.entry_time).toLocaleString();
   // Obten los datos de la reserva de las props
   const fetchParkingData = async () => {
     try {
-      const response = await agent.Parking.getParkingUserData({ user_id: reservationDataInfo.user_id, parking_id: reservationDataInfo.parking_id});
-      if (response) {
-        const entryTime = new Date(response.entry_time).toLocaleString("es-CL");
-        const exitTime = new Date().toLocaleString("es-CL");
-        const calculateFinalPayment = await agent.Parking.calculateFinalPayment( {user_id: reservationDataInfo.user_id} );
+      const entryTime = new Date(reservationDataInfo.response.entry_time).toLocaleString("es-CL");
+      const exitTime = new Date().toLocaleString("es-CL");
+      const calculateFinalPayment = await agent.Parking.calculateFinalPayment( {user_id: reservationDataInfo.userId} );
 
-        setParkingData({ total_price: calculateFinalPayment, entry_time: entryTime, exit_time: exitTime });
-      }
+      setParkingData({ total_price: calculateFinalPayment, entry_time: entryTime, exit_time: exitTime });
     } catch (error) {
       console.error("Error al obtener los datos del estacionamiento:", error);
     }
   };
+
+  useEffect(() => {
+    fetchParkingData();
+
+    setTimeout(() => {
+      navigation.navigate('Reserva', { reservationCreated: false });
+    }, 2000);
+  }, []);
 
   return (
     <View style={styles.container}>
