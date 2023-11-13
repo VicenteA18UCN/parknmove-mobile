@@ -253,7 +253,14 @@ const Reservation = ({ route }) => {
                   <Text style={styles.buttonText}>Reservar</Text>
                 </StyledButton>
                 <Text>¡Reserve ahora!</Text>
+                <StyledButton style={styles.button} onPress={(event) => navigation.navigate("History")} >                
+                  <Text style={styles.buttonText}>Historial</Text>
+                </StyledButton>
+                
               </>
+
+              
+              
             )}
           </View>
         </>

@@ -33,6 +33,8 @@ const Parking = {
   registerPayment: (user_id) => requests.post("/registerPayment", user_id),
 
   getParkingUserData: ({ parking_id, user_id}) => requests.post("/parkinguserdata", { parking_id, user_id }),
+
+  getHistory: (userId) => requests.get(`/parking/history/${userId}`, userId),
   
 };
 
@@ -57,6 +59,7 @@ const agent = {
   Login,
   Parking,
   Reservation,
+  History,
 };
 
 export default agent;

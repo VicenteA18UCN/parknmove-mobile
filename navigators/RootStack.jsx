@@ -13,6 +13,8 @@ import Register from "../app/auth/Register";
 import Reserva from "../app/reserves/Reservation";
 import ReservationInfo from "../app/reserves/ReservationInfo"; // Importa ReservationInfo.jsx
 import Payment from "../app/reserves/Payment";
+import History from "../app/History/History";
+
 
 const RootStack = () => {
   return (
@@ -32,6 +34,7 @@ const RootStack = () => {
         <Stack.Screen name="Reserva" component={Reserva} />
         <Stack.Screen name="ReservationInfo" component={ReservationInfo} />
         <Stack.Screen name="Payment" component={Payment} />
+        <Stack.Screen name="History" component={History} />
       </Stack.Navigator>
     </NavigationContainer>
   );
