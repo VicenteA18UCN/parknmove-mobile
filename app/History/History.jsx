@@ -1,6 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
 import agent from "../../api/agent";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { jwtDecode } from "jwt-decode";
 import {
   StyledContainer,
   InnerContainer,
@@ -29,7 +31,7 @@ import {
 const ReservationHistory = ( ) =>{
   const [Reservations, setReservations] = useState([]);
   const [interval, setInterval] = useState('todos');
-  const [userId, setUserId] = useState(1);
+  const [UserData, setUserData] = useState(0);
 
   const [filteredReservations, setFilteredReservations] = useState(Reservations);
 
@@ -39,6 +41,12 @@ const ReservationHistory = ( ) =>{
   };
 
 
+  useEffect(() => {
+    fetchHistory();
+  }, []);
+
+  
+  
 
   const filterReservations = (interval) => {
     if (interval === 'todos') {
@@ -65,17 +73,18 @@ const ReservationHistory = ( ) =>{
   
   const fetchHistory = async () => {
     try {
-      const response = await agent.Parking.getHistory(userId);
-
-      if (Reservations.length == 0) {
+    const dataToken = await AsyncStorage.getItem('AccessToken'); 
+    console.log(dataToken);
+    const decoded = jwtDecode(dataToken);
+    console.log(decoded);
+    const response = await agent.Parking.getHistory(decoded.id);
+      if (Reservations.length === 0) {
         setReservations(response.history);
       }
     } catch (error) {
       console.error("Error al obtener el historial:", error);
     }
   };
-
-useEffect(() => { fetchHistory(); }, []);
 
   const buttonStyle = {
     marginRight: '10px', // Ajusta el valor de margen según tus preferencias
@@ -88,31 +97,30 @@ useEffect(() => { fetchHistory(); }, []);
 
 
   return (
-    <div>
+    <div style={{ marginTop: '20px' }}>
       <h1 style={{ textAlign: 'center' }}>Historial de Reservas</h1>
-        <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '20px' }}>
-          <div style={{ display: 'flex' }}>
-            <StyledButton onPress={() => changeInterval('todos')} style={buttonStyle}>
-              <ButtonText>Todos</ButtonText>
-            </StyledButton>
-            <StyledButton onPress={() => changeInterval('ultimoMes')} style={buttonStyle}>
-              <ButtonText>Mensual</ButtonText>
-            </StyledButton>
-          </div>
-          <div style={{ display: 'flex' }}>
-            <StyledButton onPress={() => changeInterval('ultimaSemana')} style={buttonStyle}>
-              <ButtonText>Semanal</ButtonText>
-            </StyledButton>
-            <StyledButton onPress={() => changeInterval('ultimoAnio')} style={buttonStyle}>
-              <ButtonText>Anual</ButtonText>
-            </StyledButton>
-          </div>
+      <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '20px' }}>
+        <div style={{ display: 'flex' }}>
+          <StyledButton onPress={() => changeInterval('todos')} style={buttonStyle}>
+            <ButtonText>Todos</ButtonText>
+          </StyledButton>
+          <StyledButton onPress={() => changeInterval('ultimoMes')} style={buttonStyle}>
+            <ButtonText>Mensual</ButtonText>
+          </StyledButton>
         </div>
-        {filteredReservations.length > 0 ? (
+        <div style={{ display: 'flex' }}>
+          <StyledButton onPress={() => changeInterval('ultimaSemana')} style={buttonStyle}>
+            <ButtonText>Semanal</ButtonText>
+          </StyledButton>
+          <StyledButton onPress={() => changeInterval('ultimoAnio')} style={buttonStyle}>
+            <ButtonText>Anual</ButtonText>
+          </StyledButton>
+        </div>
+      </div>
+      {filteredReservations.length > 0 ? (
         <table style={{ margin: '0 auto', borderCollapse: 'collapse', width: '80%' }}>
           <thead>
             <tr style={{ backgroundColor: '#333', color: 'white' }}>
-              <th style={{ border: '1px solid #ccc', padding: '8px', textAlign: 'center' }}>Lugar</th>
               <th style={{ border: '1px solid #ccc', padding: '8px', textAlign: 'center' }}>Fecha</th>
               <th style={{ border: '1px solid #ccc', padding: '8px', textAlign: 'center' }}>Hora</th>
               <th style={{ border: '1px solid #ccc', padding: '8px', textAlign: 'center' }}>Valor</th>
@@ -121,10 +129,9 @@ useEffect(() => { fetchHistory(); }, []);
           <tbody>
             {filteredReservations.map((Reservation, index) => (
               <tr key={Reservation.id} style={{ backgroundColor: index % 2 === 0 ? '#f2f2f2' : 'white' }}>
-              <td style={{ border: '1px solid #ccc', padding: '8px', textAlign: 'center' }}>{Reservation.direccion}</td>
-              <td style={{ border: '1px solid #ccc', padding: '8px', textAlign: 'center' }}>{new Date(Reservation.entry_time).toLocaleDateString()}</td>
-              <td style={{ border: '1px solid #ccc', padding: '8px', textAlign: 'center' }}>{new Date(Reservation.entry_time).toLocaleTimeString()}</td>
-              <td style={{ border: '1px solid #ccc', padding: '8px', textAlign: 'center' }}>{Reservation.extra_fee}</td>
+                <td style={{ border: '1px solid #ccc', padding: '8px', textAlign: 'center' }}>{new Date(Reservation.entry_time).toLocaleDateString()}</td>
+                <td style={{ border: '1px solid #ccc', padding: '8px', textAlign: 'center' }}>{new Date(Reservation.entry_time).toLocaleTimeString()}</td>
+                <td style={{ border: '1px solid #ccc', padding: '8px', textAlign: 'center' }}>{Reservation.extra_fee + Reservation.total_price}</td>
               </tr>
             ))}
           </tbody>
@@ -132,7 +139,7 @@ useEffect(() => { fetchHistory(); }, []);
       ) : (
         <div style={{ textAlign: 'center' }}>
           <p>No reservations found.</p>
-          </div>
+        </div>
       )}
     </div>
   );

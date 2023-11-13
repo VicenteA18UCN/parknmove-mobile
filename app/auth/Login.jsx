@@ -3,6 +3,7 @@ import { Text, View, TextInput, TouchableOpacity, StyleSheet } from "react-nativ
 import { StatusBar } from "expo-status-bar";
 import axios from "axios";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { jwtDecode } from "jwt-decode";
 
 //Iconos
 import { Octicons, Ionicons } from "@expo/vector-icons";
@@ -46,7 +47,6 @@ const Login = ({ navigation }) => {
     agent.Login.login(data.email, data.password)
       .then((response) => {
         if (response.token) {
-          //console.log(response);
           AsyncStorage.setItem("AccessToken", response.token)
           navigation.replace("Reserva")
         }
@@ -103,6 +103,7 @@ const Login = ({ navigation }) => {
               />
               <MsgBox></MsgBox>
               <StyledButton onPress={() => handleSubmit()}>
+                
                 <ButtonText onPress={(event) => navigation.navigate("Reserva")}>Iniciar Sesión</ButtonText>
               </StyledButton>
 
