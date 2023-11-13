@@ -1,10 +1,16 @@
 
-## Instrucciones
+## Instructions
 
-Para esto, se deben ejecutar los siguientes comandos en la consola:
+Install:
 
 ```bash
     npm install
     npx install expo
+```
+To run:
 
-Hosting en: [http://localhost:19000](http://localhost:19000).
+```bash
+    npx expo start
+```
+
+Hosting in: [http://localhost:19000](http://localhost:19000).
