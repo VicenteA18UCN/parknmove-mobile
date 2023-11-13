@@ -102,13 +102,9 @@ const Login = ({ navigation }) => {
                 setHidePassword={setHidePassword}
               />
               <MsgBox></MsgBox>
-              <StyledButton onPress={() => handleSubmit()}>
-                
-                <ButtonText onPress={(event) => navigation.navigate("Reserva")}>Iniciar Sesión</ButtonText>
-              </StyledButton>
 
               <StyledButton onPress={() => handleSubmit()}>
-                <ButtonText>Iniciar Sesión2</ButtonText>
+                <ButtonText>Iniciar Sesión</ButtonText>
               </StyledButton>
 
               <Line />
