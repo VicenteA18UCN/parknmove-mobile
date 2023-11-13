@@ -13,4 +13,4 @@ To run:
     npx expo start
 ```
 
-Hosting en: [http://localhost:19000](http://localhost:19000).
+Hosting in: [http://localhost:19000](http://localhost:19000).
