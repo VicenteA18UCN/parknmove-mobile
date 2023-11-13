@@ -17,16 +17,13 @@ const Payment = ({ route }) => {
   const navigation = useNavigation();
   const [parkingUserData, setParkingData] = useState(null);
 
-
-  //console.log("Datos de la reserva:", route.params);
-
   //const entryTime = new Date(reservationDataInfo.response.entry_time).toLocaleString();
   // Obten los datos de la reserva de las props
   const fetchParkingData = async () => {
     try {
       const entryTime = new Date(reservationDataInfo.response.entry_time).toLocaleString("es-CL");
       const exitTime = new Date().toLocaleString("es-CL");
-      const calculateFinalPayment = await agent.Parking.calculateFinalPayment( {user_id: reservationDataInfo.userId} );
+      const calculateFinalPayment = await agent.Parking.calculateFinalPayment( {reservationDataInfo: reservationDataInfo} );
 
       setParkingData({ total_price: calculateFinalPayment, entry_time: entryTime, exit_time: exitTime });
     } catch (error) {

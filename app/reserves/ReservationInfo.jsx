@@ -27,6 +27,7 @@ const ReservationInfo = ({ route }) => {
       const response = await agent.Parking.registerPayment({
         user_id: reservationDataInfo.userId
       });
+
       navigation.navigate("Payment", { reservationDataInfo: reservationDataInfo });
     } catch (error) {
       console.error("Error al registrar el pago:", error);
