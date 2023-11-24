@@ -4,6 +4,7 @@ import QRCode from 'react-native-qrcode-svg';
 import agent from "../../api/agent";
 import React, { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSelector, useDispatch } from "redux";
 
 
@@ -21,7 +22,16 @@ const ReservationInfo = ({ route }) => {
   // Combina toda la información en una cadena que se incluirá en el código QR
   const qrData = `Usuario: ${reservationDataInfo.userName}\nEstacionamiento: ${reservationDataInfo.parkingName}\nHora de entrada: ${entryTime}\nCosto por hora: $${reservationDataInfo.response.extra_fee}`;
 
-  //const [user_id, setUser_id] = useState(null);
+  useEffect(() => {
+    handleGetToken();
+  }, []);
+
+  const handleGetToken = async () => {
+    const dataToken = await AsyncStorage.getItem('AccessToken');
+    if (!dataToken) {
+      navigation.replace('Login');
+    }
+  };
   const Payment = async () => {
     try {
       const response = await agent.Parking.registerPayment({

@@ -1,4 +1,5 @@
 import axios from "axios";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 axios.defaults.baseURL = "http://localhost:4000/";
 
@@ -17,25 +18,24 @@ const requests = {
   delete: (url) => axios.delete(url).then(responseBody),
 };
 
+const addTokenToRequest = async (config) => {
+  const token = await AsyncStorage.getItem('AccessToken');
+  if (token) {
+    config.headers.Authorization = `${token}`;
+  }
+  return config;
+};
+
+axios.interceptors.request.use(addTokenToRequest);
+
 const Parking = {
-  // Función para obtener todos los datos del estacionamiento
   getAllParkingData: () => requests.get(`/parking`),
-
-  // Función para calcular el precio total (Manteniendo tu función original)
   calculateExtraFee: (parkingId) => requests.get(`/calculateExtraFee`),
-
   calculateFinalPayment: (user_id) => requests.post(`/calculateFinalPayment`, user_id),
-
-  // Función para obtener los espacios ocupados
   getOccupiedSpaces: () => requests.get(`parking/occupiedSpaces`),
-
-  //registerPayment: (user_id) => requests.post("/registerPayment", user_id),
   registerPayment: (user_id) => requests.post("/registerPayment", user_id),
-
-  getParkingUserData: ({ parking_id, user_id}) => requests.post("/parkinguserdata", { parking_id, user_id }),
-
+  getParkingUserData: ({ parking_id, user_id }) => requests.post("/parkinguserdata", { parking_id, user_id }),
   getHistory: (userId) => requests.get(`/parking/history/${userId}`, userId),
-  
 };
 
 const Reservation = { 
@@ -59,7 +59,6 @@ const agent = {
   Login,
   Parking,
   Reservation,
-  History,
 };
 
 export default agent;

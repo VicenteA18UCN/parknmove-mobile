@@ -45,8 +45,19 @@ const ReservationHistory = ( ) =>{
     fetchHistory();
   }, []);
 
-  
-  
+  useEffect(() => {
+    handleGetToken();
+  }, []);
+
+  const handleGetToken = async () => {
+    const dataToken = await AsyncStorage.getItem('AccessToken');
+    if (!dataToken) {
+      navigation.replace('Login');
+    } else {
+      const decoded = jwtDecode(dataToken);
+      setUserData(decoded);
+    }
+  };
 
   const filterReservations = (interval) => {
     if (interval === 'todos') {
@@ -74,9 +85,7 @@ const ReservationHistory = ( ) =>{
   const fetchHistory = async () => {
     try {
     const dataToken = await AsyncStorage.getItem('AccessToken'); 
-    console.log(dataToken);
     const decoded = jwtDecode(dataToken);
-    console.log(decoded);
     const response = await agent.Parking.getHistory(decoded.id);
       if (Reservations.length === 0) {
         setReservations(response.history);

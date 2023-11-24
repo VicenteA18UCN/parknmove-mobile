@@ -30,7 +30,6 @@ const Reservation = ({ route }) => {
   useEffect(() => {
 
     if (route.params) {
-      console.log("reserva", route.params);
       setReservationCreated(route.params.reservationCreatedParam);
     }
   }, [route.params]);
@@ -38,6 +37,16 @@ const Reservation = ({ route }) => {
   useEffect(() => {
     handleGetToken();
   }, []);
+
+  const handleGetToken = async () => {
+    const dataToken = await AsyncStorage.getItem('AccessToken');
+    if (!dataToken) {
+      navigation.replace('Login');
+    } else {
+      const decoded = jwtDecode(dataToken);
+      setUserData(decoded);
+    }
+  };
 
   useEffect(() => {
     // Llamada a la API para obtener la reserva activa del usuario
@@ -52,7 +61,6 @@ const Reservation = ({ route }) => {
           setReservationCreated(false);
         }
       } catch (error) {
-        console.error("Error al obtener la reserva:", error);
       }
     };
 
@@ -75,16 +83,6 @@ const Reservation = ({ route }) => {
       dataParkingUser();
     }
   }, [reservationDataInfo]);
-
-  const handleGetToken = async () => {
-    const dataToken = await AsyncStorage.getItem('AccessToken');
-    if (!dataToken) {
-      navigation.replace('Login');
-    } else {
-      const decoded = jwtDecode(dataToken);
-      setUserData(decoded);
-    }
-  };
 
   const fetchParkingData = async () => {
     try {
@@ -149,7 +147,6 @@ const Reservation = ({ route }) => {
     const user_id = userData.id;
     try{
       const status = await agent.Parking.getParkingUserData({ parking_id: parking_id, user_id: user_id });
-      console.log(status);
       if (status !== null){
         setReservationDataInfo(status);
         setReservationCreated(true);
