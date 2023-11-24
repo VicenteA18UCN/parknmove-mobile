@@ -28,7 +28,7 @@ const ReservationInfo = ({ route }) => {
         user_id: reservationDataInfo.userId
       });
 
-      navigation.navigate("Payment", { reservationDataInfo: reservationDataInfo });
+      navigation.navigate("Pago", { reservationDataInfo: reservationDataInfo });
     } catch (error) {
       console.error("Error al registrar el pago:", error);
     }
@@ -59,6 +59,7 @@ const ReservationInfo = ({ route }) => {
         <QRCode value={qrData} size={200} />
       </View>
       <View>
+        <Text style={styles.space}> </Text>
         <StyledButton style={styles.button} onPress={() => Payment()}>
           <Text style={styles.buttonText}>Ir a pagar</Text>
         </StyledButton>
@@ -96,7 +97,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   button: {
-    backgroundColor: "#007BFF",
+    backgroundColor: "#10B981",
     padding: 12,
     alignItems: "center",
   },

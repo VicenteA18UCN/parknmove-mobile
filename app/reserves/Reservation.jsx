@@ -4,6 +4,7 @@ import agent from "../../api/agent";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { jwtDecode } from "jwt-decode";
+import { Header, Icon } from 'react-native-elements';
 
 import {
   StyledContainer,
@@ -174,7 +175,7 @@ const Reservation = ({ route }) => {
           parkingName: parkingData.name,
           userId: userData.id,
         };
-        navigation.navigate("ReservationInfo", { reservationDataInfo });
+        navigation.navigate("Detalle Reserva", { reservationDataInfo });
       } else {
         // Si no hay reserva activa, muestra un mensaje al usuario
         alert("No tienes una reserva activa en este momento.");
@@ -204,7 +205,7 @@ const Reservation = ({ route }) => {
             parkingName: parkingData.name,
             userId: userData.id,
           };
-          navigation.navigate("ReservationInfo", { reservationDataInfo: reservationDataInfo });
+          navigation.navigate("Detalle Reserva", { reservationDataInfo: reservationDataInfo });
           setReservationDataInfo(status);
           setReservationCreated(true);
         } else {
@@ -220,13 +221,11 @@ const Reservation = ({ route }) => {
   };
 
   return (
+    
     <View style={styles.container}>
       {parkingData ? (
         <>
         <View>
-          <Text>
-            Bienvenido
-          </Text>
         </View>
           <View style={styles.emojiContainer}>
             <Text style={styles.emoji}>{getEmotion().emoji}</Text>
@@ -253,9 +252,6 @@ const Reservation = ({ route }) => {
                   <Text style={styles.buttonText}>Reservar</Text>
                 </StyledButton>
                 <Text>¡Reserve ahora!</Text>
-                <StyledButton style={styles.button} onPress={(event) => navigation.navigate("History")} >                
-                  <Text style={styles.buttonText}>Historial</Text>
-                </StyledButton>
                 
               </>
 
@@ -319,7 +315,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   button: {
-    backgroundColor: "#007BFF",
+    backgroundColor: "#10B981",
     padding: 12,
     alignItems: "center",
   },

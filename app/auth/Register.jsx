@@ -148,7 +148,7 @@ const Register = ( ) => {
                 <ExtraView>
                   <ExtraText>Ya estas registrado?</ExtraText>
                   <TextLink>
-                    <TextLinkContent onPress={(event) => navigation.navigate("Login")}> Inicia Sesión!</TextLinkContent>
+                    <TextLinkContent onPress={(event) => navigation.navigate("Iniciar sesión")}> Inicia Sesión!</TextLinkContent>
                   </TextLink>
                 </ExtraView>
               </StyledFormArea>
