@@ -3,6 +3,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { NavigationContainer } from "@react-navigation/native";
 import { Colors } from "./../components/styles";
 import { Icon } from 'react-native-elements';
+import { Image } from "react-native";
 
 const { tertiary } = Colors;
 
@@ -52,7 +53,15 @@ const RootStack = () => {
                 containerStyle={{ marginRight: 10 }}
               />
             ),
-          })}
+            headerLeft: () => (
+              <Image
+                source={require("../assets/favicon.png")}
+                style={{ width: 40, height: 40, marginLeft: 10 }}
+              />
+            ),    
+          }
+          )
+        }
         />
         <Stack.Screen name="Detalle Reserva" component={ReservationInfo} />
         <Stack.Screen name="Pago" component={Payment} />

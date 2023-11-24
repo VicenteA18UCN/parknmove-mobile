@@ -4,7 +4,7 @@ import agent from "../../api/agent";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { jwtDecode } from "jwt-decode";
-import { Header, Icon } from 'react-native-elements';
+import { Image } from "react-native";
 
 import {
   StyledContainer,
@@ -227,6 +227,12 @@ const Reservation = ({ route }) => {
         <>
         <View>
         </View>
+        <View>
+          <Image
+                source={require("../../assets/parking.gif")}
+                style={{ width: 450, height: 200 , borderColor: '#10B981', borderWidth: 10}}
+              />
+        </View>
           <View style={styles.emojiContainer}>
             <Text style={styles.emoji}>{getEmotion().emoji}</Text>
             <Text style={styles.emotionText}>{getEmotion().text}</Text>
@@ -272,6 +278,9 @@ const styles = StyleSheet.create({
     flex: 1,
 
     alignItems: "center",
+  },
+  gifContainer: {
+    marginTop: 20,
   },
   emojiContainer: {
     alignItems: "center",
