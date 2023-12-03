@@ -24,7 +24,8 @@ const Parking = {
   // Función para calcular el precio total (Manteniendo tu función original)
   calculateExtraFee: (parkingId) => requests.get(`/calculateExtraFee`),
 
-  calculateFinalPayment: (user_id) => requests.post(`/calculateFinalPayment`, user_id),
+  calculateFinalPayment: (user_id) =>
+    requests.post(`/calculateFinalPayment`, user_id),
 
   // Función para obtener los espacios ocupados
   getOccupiedSpaces: () => requests.get(`parking/occupiedSpaces`),
@@ -32,15 +33,17 @@ const Parking = {
   //registerPayment: (user_id) => requests.post("/registerPayment", user_id),
   registerPayment: (user_id) => requests.post("/registerPayment", user_id),
 
-  getParkingUserData: ({ parking_id, user_id}) => requests.post("/parkinguserdata", { parking_id, user_id }),
+  getParkingUserData: ({ parking_id, user_id }) =>
+    requests.post("/parkinguserdata", { parking_id, user_id }),
 
   getHistory: (userId) => requests.get(`/parking/history/${userId}`, userId),
-  
 };
 
-const Reservation = { 
-  createReservation: (reservationData) => requests.post("/reservations", reservationData),
-  getReservationByUserId: (user_id) => requests.get(`/reservations/user/${user_id}`),
+const Reservation = {
+  createReservation: (reservationData) =>
+    requests.post("/reservations", reservationData),
+  getReservationByUserId: (user_id) =>
+    requests.get(`/reservations/user/${user_id}`),
 };
 
 const Login = {
@@ -59,7 +62,6 @@ const agent = {
   Login,
   Parking,
   Reservation,
-  History,
 };
 
 export default agent;
