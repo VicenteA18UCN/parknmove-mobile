@@ -1,12 +1,9 @@
 import React from "react";
-
 import { createStackNavigator } from "@react-navigation/stack";
 import { NavigationContainer } from "@react-navigation/native";
 import { Colors } from "./../components/styles";
 const { primary, tertiary } = Colors;
-
 const Stack = createStackNavigator();
-
 // Importa las pantallas necesarias
 import Login from "../app/auth/Login";
 import Register from "../app/auth/Register";
@@ -14,7 +11,6 @@ import Reserva from "../app/reserves/Reservation";
 import ReservationInfo from "../app/reserves/ReservationInfo"; // Importa ReservationInfo.jsx
 import Payment from "../app/reserves/Payment";
 import History from "../app/History/History";
-
 
 const RootStack = () => {
   return (

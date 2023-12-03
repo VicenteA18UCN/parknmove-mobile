@@ -1,8 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { Text, View, TextInput, TouchableOpacity, StyleSheet } from "react-native";
+import {
+  Text,
+  View,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  Alert,
+} from "react-native";
 import { StatusBar } from "expo-status-bar";
 import axios from "axios";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { jwtDecode } from "jwt-decode";
 
 //Iconos
@@ -33,31 +40,28 @@ import {
   TextLink,
   TextLinkContent,
 } from "../../components/styles";
-
 import agent from "../../api/agent";
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation } from "@react-navigation/native";
 //Colores
-const { brand, darkLight,green } = Colors;
+const { brand, darkLight, green } = Colors;
 
 const Login = ({ navigation }) => {
   const [hidePassword, setHidePassword] = useState(true);
 
   const handleLogin = (data) => {
-
     agent.Login.login(data.email, data.password)
       .then((response) => {
         if (response.token) {
-          AsyncStorage.setItem("AccessToken", response.token)
-          navigation.replace("Reserva")
+          AsyncStorage.setItem("AccessToken", response.token);
+          navigation.replace("Reserva");
         }
       })
       .catch((err) => {
-        console.error(err);
-      })
+        Alert.alert("Error", "Usuario o contraseña incorrectos");
+      });
   };
 
   return (
-    
     <StyledContainer>
       <StatusBar style="dark" />
       <InnerContainer>
@@ -111,7 +115,12 @@ const Login = ({ navigation }) => {
               <ExtraView>
                 <ExtraText>No tienes una cuenta?</ExtraText>
                 <TextLink>
-                  <TextLinkContent onPress={(event) => navigation.navigate("Register")}> Registrate!</TextLinkContent>
+                  <TextLinkContent
+                    onPress={(event) => navigation.navigate("Register")}
+                  >
+                    {" "}
+                    Registrate!
+                  </TextLinkContent>
                 </TextLink>
               </ExtraView>
             </StyledFormArea>
@@ -153,23 +162,23 @@ const MyTextInput = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
     marginHorizontal: 20,
   },
   wrapperInput: {
     borderWidth: 0.5,
     borderRadius: 5,
-    borderColor: 'grey',
+    borderColor: "grey",
     marginTop: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   input: {
     padding: 10,
-    width: '100%',
+    width: "100%",
   },
   wrapperIcon: {
-    position: 'absolute',
+    position: "absolute",
     right: 0,
     padding: 10,
   },
@@ -179,27 +188,27 @@ const styles = StyleSheet.create({
   },
   button: {
     padding: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'orange',
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "orange",
     borderRadius: 5,
     marginTop: 25,
   },
   buttonDisable: {
     padding: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'grey',
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "grey",
     borderRadius: 5,
     marginTop: 25,
   },
   text: {
-    color: 'white',
-    fontWeight: '700',
+    color: "white",
+    fontWeight: "700",
   },
   textFailed: {
-    alignSelf: 'flex-end',
-    color: 'red',
+    alignSelf: "flex-end",
+    color: "red",
   },
 });
 
