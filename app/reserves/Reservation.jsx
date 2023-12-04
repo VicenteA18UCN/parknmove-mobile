@@ -207,7 +207,7 @@ const Reservation = ({ route }) => {
             parkingName: parkingData.name,
             userId: userData.id,
           };
-          navigation.navigate("ReservationInfo", {
+          navigation.navigate("Detalle Reserva", {
             reservationDataInfo: reservationDataInfo,
           });
           setReservationDataInfo(status);
