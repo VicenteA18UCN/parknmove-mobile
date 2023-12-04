@@ -11,6 +11,8 @@ import { StatusBar } from "expo-status-bar";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { jwtDecode } from "jwt-decode";
+import { useDispatch, useSelector } from "react-redux";
+import { login } from "../../navigators/userSlice";
 
 //Iconos
 import { Octicons, Ionicons } from "@expo/vector-icons";
@@ -47,13 +49,16 @@ const { brand, darkLight, green } = Colors;
 
 const Login = ({ navigation }) => {
   const [hidePassword, setHidePassword] = useState(true);
+  const dispatch = useDispatch();
 
   const handleLogin = (data) => {
     agent.Login.login(data.email, data.password)
       .then((response) => {
         if (response.token) {
+          dispatch(login(response.token));
           AsyncStorage.setItem("AccessToken", response.token);
           navigation.replace("Reserva");
+          console.log("Login correcto");
         }
       })
       .catch((err) => {

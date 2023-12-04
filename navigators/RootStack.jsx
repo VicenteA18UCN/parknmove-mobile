@@ -11,8 +11,12 @@ import Reserva from "../app/reserves/Reservation";
 import ReservationInfo from "../app/reserves/ReservationInfo"; // Importa ReservationInfo.jsx
 import Payment from "../app/reserves/Payment";
 import History from "../app/History/History";
+import { useSelector } from "react-redux";
+import { selectId } from "./userSlice";
 
-const RootStack = () => {
+function RootStack() {
+  const isAuth = useSelector(selectId);
+
   return (
     <NavigationContainer>
       <Stack.Navigator
@@ -25,8 +29,12 @@ const RootStack = () => {
         }}
         initialRouteName="Login"
       >
-        <Stack.Screen name="Login" component={Login} />
-        <Stack.Screen name="Register" component={Register} />
+        {!isAuth && (
+          <>
+            <Stack.Screen name="Login" component={Login} />
+            <Stack.Screen name="Register" component={Register} />
+          </>
+        )}
         <Stack.Screen name="Reserva" component={Reserva} />
         <Stack.Screen name="ReservationInfo" component={ReservationInfo} />
         <Stack.Screen name="Payment" component={Payment} />
@@ -34,6 +42,6 @@ const RootStack = () => {
       </Stack.Navigator>
     </NavigationContainer>
   );
-};
+}
 
 export default RootStack;
