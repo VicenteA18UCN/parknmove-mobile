@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { jwtDecode } from "jwt-decode";
+import "core-js/stable/atob";
 
 const initialState = {
   id: null,
@@ -14,6 +15,7 @@ export const userSlice = createSlice({
   initialState,
   reducers: {
     login: (state, action) => {
+      console.log(action.payload);
       const payload = jwtDecode(action.payload);
       state.id = payload.id;
       state.name = payload.name;

@@ -16,6 +16,7 @@
     "@reduxjs/toolkit": "^1.9.7",
     "axios": "^1.6.0",
     "babel-plugin-inline-dotenv": "^1.7.0",
+    "core-js": "^3.33.3",
     "expo": "^49.0.16",
     "expo-constants": "^14.4.2",
     "expo-router": "^2.0.10",

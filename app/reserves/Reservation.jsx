@@ -52,9 +52,7 @@ const Reservation = ({ route }) => {
         } else {
           setReservationCreated(false);
         }
-      } catch (error) {
-        console.error("Error al obtener la reserva:", error);
-      }
+      } catch (error) {}
     };
 
     checkReservation();
@@ -119,9 +117,7 @@ const Reservation = ({ route }) => {
       if (response) {
         setOccupiedSpaces(response);
       }
-    } catch (error) {
-      console.error("Error al obtener los espacios ocupados:", error);
-    }
+    } catch (error) {}
   };
 
   const getEmotion = () => {
@@ -159,9 +155,7 @@ const Reservation = ({ route }) => {
         setReservationCreated(true);
         return;
       }
-    } catch (error) {
-      console.error("Error al guardar la información:", error);
-    }
+    } catch (error) {}
   };
 
   const handleGoToReservation = async () => {
@@ -185,9 +179,7 @@ const Reservation = ({ route }) => {
         // Si no hay reserva activa, muestra un mensaje al usuario
         alert("No tienes una reserva activa en este momento.");
       }
-    } catch (error) {
-      console.error("Error al obtener la reserva:", error);
-    }
+    } catch (error) {}
   };
 
   const handleReservation = async () => {

@@ -53,10 +53,11 @@ const Login = ({ navigation }) => {
 
   const handleLogin = (data) => {
     agent.Login.login(data.email, data.password)
-      .then((response) => {
+      .then(async (response) => {
         if (response.token) {
+          await AsyncStorage.setItem("AccessToken", response.token);
           dispatch(login(response.token));
-          AsyncStorage.setItem("AccessToken", response.token);
+          console.log(response.token);
           navigation.replace("Reserva");
           console.log("Login correcto");
         }
