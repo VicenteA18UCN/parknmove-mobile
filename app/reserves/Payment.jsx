@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { View, Text, Image, StyleSheet } from "react-native";
 import agent from "../../api/agent";
 import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   StyledContainer,
   InnerContainer,
@@ -17,8 +18,16 @@ const Payment = ({ route }) => {
   const navigation = useNavigation();
   const [parkingUserData, setParkingData] = useState(null);
 
-  //const entryTime = new Date(reservationDataInfo.response.entry_time).toLocaleString();
-  // Obten los datos de la reserva de las props
+  useEffect(() => {
+    handleGetToken();
+  }, []);
+
+  const handleGetToken = async () => {
+    const dataToken = await AsyncStorage.getItem('AccessToken');
+    if (!dataToken) {
+      navigation.replace('Login');
+    }
+  };
   const fetchParkingData = async () => {
     try {
       const entryTime = new Date(reservationDataInfo.response.entry_time).toLocaleString("es-CL");
@@ -88,7 +97,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   button: {
-    backgroundColor: "#007BFF",
+    backgroundColor: "#10B981",
     padding: 12,
     alignItems: "center",
   },

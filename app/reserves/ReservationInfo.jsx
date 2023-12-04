@@ -4,6 +4,7 @@ import QRCode from 'react-native-qrcode-svg';
 import agent from "../../api/agent";
 import React, { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSelector, useDispatch } from "redux";
 
 
@@ -21,14 +22,23 @@ const ReservationInfo = ({ route }) => {
   // Combina toda la información en una cadena que se incluirá en el código QR
   const qrData = `Usuario: ${reservationDataInfo.userName}\nEstacionamiento: ${reservationDataInfo.parkingName}\nHora de entrada: ${entryTime}\nCosto por hora: $${reservationDataInfo.response.extra_fee}`;
 
-  //const [user_id, setUser_id] = useState(null);
+  useEffect(() => {
+    handleGetToken();
+  }, []);
+
+  const handleGetToken = async () => {
+    const dataToken = await AsyncStorage.getItem('AccessToken');
+    if (!dataToken) {
+      navigation.replace('Login');
+    }
+  };
   const Payment = async () => {
     try {
       const response = await agent.Parking.registerPayment({
         user_id: reservationDataInfo.userId
       });
 
-      navigation.navigate("Payment", { reservationDataInfo: reservationDataInfo });
+      navigation.navigate("Pago", { reservationDataInfo: reservationDataInfo });
     } catch (error) {
       console.error("Error al registrar el pago:", error);
     }
@@ -59,6 +69,7 @@ const ReservationInfo = ({ route }) => {
         <QRCode value={qrData} size={200} />
       </View>
       <View>
+        <Text style={styles.space}> </Text>
         <StyledButton style={styles.button} onPress={() => Payment()}>
           <Text style={styles.buttonText}>Ir a pagar</Text>
         </StyledButton>
@@ -96,7 +107,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   button: {
-    backgroundColor: "#007BFF",
+    backgroundColor: "#10B981",
     padding: 12,
     alignItems: "center",
   },

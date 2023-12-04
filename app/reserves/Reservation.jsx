@@ -6,6 +6,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { jwtDecode } from "jwt-decode";
 import { useDispatch } from "react-redux";
 import { logout } from "../../navigators/userSlice";
+import { Image } from "react-native";
 
 import {
   StyledContainer,
@@ -30,7 +31,6 @@ const Reservation = ({ route }) => {
   const dispatch = useDispatch();
   useEffect(() => {
     if (route.params) {
-      console.log("reserva", route.params);
       setReservationCreated(route.params.reservationCreatedParam);
     }
   }, [route.params]);
@@ -63,12 +63,19 @@ const Reservation = ({ route }) => {
   }, []);
 
   useEffect(() => {
+    let timer;
     if (parkingData) {
-      fetchExtraFee();
-      fetchOccupiedSpaces();
+      timer = setTimeout(() => {
+        fetchExtraFee();
+        fetchOccupiedSpaces();
+      }, 300000);
     }
+    return () => {
+      if (timer) {
+        clearTimeout(timer);
+      }
+    };
   }, [parkingData]);
-
   useEffect(() => {
     if (parkingData) {
       dataParkingUser();
@@ -92,9 +99,7 @@ const Reservation = ({ route }) => {
         const parkingInfo = response[0];
         setParkingData(parkingInfo);
       }
-    } catch (error) {
-      console.error("Error al obtener los datos del estacionamiento:", error);
-    }
+    } catch (error) {}
   };
 
   const fetchExtraFee = async () => {
@@ -104,10 +109,7 @@ const Reservation = ({ route }) => {
       if (response && response.ExtraFee) {
         setExtraFee(response.ExtraFee);
       }
-    } catch (error) {
-      setExtraFee(500);
-      console.error("Error al obtener el extra_fee:", error);
-    }
+    } catch (error) {}
   };
 
   const fetchOccupiedSpaces = async () => {
@@ -174,7 +176,7 @@ const Reservation = ({ route }) => {
           parkingName: parkingData.name,
           userId: userData.id,
         };
-        navigation.navigate("ReservationInfo", { reservationDataInfo });
+        navigation.navigate("Detalle Reserva", { reservationDataInfo });
       } else {
         // Si no hay reserva activa, muestra un mensaje al usuario
         alert("No tienes una reserva activa en este momento.");
@@ -217,16 +219,14 @@ const Reservation = ({ route }) => {
         handleGoToReservation();
         return;
       }
-    } catch (error) {
-      console.error("Error al crear la reserva:", error);
-    }
+    } catch (error) {}
   };
 
   const handleLogout = async () => {
     try {
       dispatch(logout());
       await AsyncStorage.removeItem("AccessToken");
-      navigation.replace("Login");
+      navigation.replace("Iniciar sesión");
     } catch (error) {
       console.error("Error al cerrar sesión:", error);
     }
@@ -268,19 +268,24 @@ const Reservation = ({ route }) => {
                 <Text>¡Reserve ahora!</Text>
                 <StyledButton
                   style={styles.button}
-                  onPress={(event) => navigation.navigate("History")}
+                  onPress={(event) => navigation.navigate("Historial")}
                 >
                   <Text style={styles.buttonText}>Historial</Text>
                 </StyledButton>
                 <StyledButton style={styles.button} onPress={handleLogout}>
-                  <Text style={styles.buttonText}>Cerrar Sesión</Text>
+                  <Text style={styles.buttonText}>Cerrar sesión</Text>
                 </StyledButton>
               </>
             )}
           </View>
         </>
       ) : (
-        <Text>Cargando información del estacionamiento...</Text>
+        <>
+          <Text>Cargando información del estacionamiento...</Text>
+          <StyledButton style={styles.button} onPress={handleLogout}>
+            <Text style={styles.buttonText}>Cerrar sesión</Text>
+          </StyledButton>
+        </>
       )}
     </View>
   );
@@ -291,6 +296,9 @@ const styles = StyleSheet.create({
     flex: 1,
 
     alignItems: "center",
+  },
+  gifContainer: {
+    marginTop: 20,
   },
   emojiContainer: {
     alignItems: "center",
@@ -334,7 +342,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   button: {
-    backgroundColor: "#007BFF",
+    backgroundColor: "#10B981",
     padding: 12,
     alignItems: "center",
   },

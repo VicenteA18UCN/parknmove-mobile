@@ -75,7 +75,6 @@ const Login = ({ navigation }) => {
           resizeMode="cover"
           source={require("../../assets/icon.png")}
         />
-        <Title>ParknMove</Title>
         <SubTitle>Hola! Que gusto verte otra vez</SubTitle>
 
         <Formik
@@ -121,12 +120,7 @@ const Login = ({ navigation }) => {
               <ExtraView>
                 <ExtraText>No tienes una cuenta?</ExtraText>
                 <TextLink>
-                  <TextLinkContent
-                    onPress={(event) => navigation.navigate("Register")}
-                  >
-                    {" "}
-                    Registrate!
-                  </TextLinkContent>
+                  <TextLinkContent onPress={(event) => navigation.navigate("Registrar")}> Registrate!</TextLinkContent>
                 </TextLink>
               </ExtraView>
             </StyledFormArea>
