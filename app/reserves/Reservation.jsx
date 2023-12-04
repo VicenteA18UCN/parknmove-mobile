@@ -109,7 +109,9 @@ const Reservation = ({ route }) => {
       if (response && response.ExtraFee) {
         setExtraFee(response.ExtraFee);
       }
-    } catch (error) {}
+    } catch (error) {
+      setExtraFee(400);
+    }
   };
 
   const fetchOccupiedSpaces = async () => {
