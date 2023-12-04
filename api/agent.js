@@ -1,11 +1,13 @@
 import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+axios.defaults.baseURL = "http://localhost:4000/"; //Cambiar dependiendo de la ip de la computadora
 
-axios.defaults.baseURL = "http://localhost:4000/";
+axios.defaults.withCredentials = true;
 
-const ApiManager = axios.create({
-  baseURL: "http://localhost:4000/",
-  responseType: "json",
-  withCredentials: true,
+axios.interceptors.request.use(async (config) => {
+  const token = await AsyncStorage.getItem("AccessToken");
+  if (token) config.headers.Authorization = "Bearer " + token;
+  return config;
 });
 
 const responseBody = (response) => response.data;
