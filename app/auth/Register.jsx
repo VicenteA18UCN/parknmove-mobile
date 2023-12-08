@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Text, View, ScrollView, ToastAndroid } from "react-native";
+import { Text, View, ScrollView } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { login } from "../../navigators/userSlice";
 import { useDispatch } from "react-redux";

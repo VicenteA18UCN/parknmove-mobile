@@ -19,6 +19,7 @@ const Payment = ({ route }) => {
   const [parkingUserData, setParkingData] = useState(null);
 
   useEffect(() => {
+    
     handleGetToken();
   }, []);
 

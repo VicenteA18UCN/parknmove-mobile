@@ -18,7 +18,7 @@ const ReservationInfo = ({ route }) => {
   const navigation = useNavigation();
 
   // Formatear la hora de entrada
-  const entryTime = new Date(reservationDataInfo.response.entry_time).toLocaleString();
+  var entryTime = new Date(reservationDataInfo.response.entry_time).toLocaleString("es-CL");
   // Combina toda la información en una cadena que se incluirá en el código QR
   const qrData = `Usuario: ${reservationDataInfo.userName}\nEstacionamiento: ${reservationDataInfo.parkingName}\nHora de entrada: ${entryTime}\nCosto por hora: $${reservationDataInfo.response.extra_fee}`;
 

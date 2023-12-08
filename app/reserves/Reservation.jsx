@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import agent from "../../api/agent";
-import { useNavigation, useFocusEffect } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { jwtDecode } from "jwt-decode";
 import { useDispatch } from "react-redux";
 import { logout } from "../../navigators/userSlice";
-import { Image } from "react-native";
 
 import {
   StyledContainer,
@@ -19,16 +18,14 @@ import {
 
 const Reservation = ({ route }) => {
   const [parkingData, setParkingData] = useState(null);
-  const [user_id, setUser_id] = useState();
-  const [entry_time, setEntryTime] = useState(new Date());
-  const [extraFee, setExtraFee] = useState(400);
+  const [extraFee, setExtraFee] = useState();
   const [reservationCreated, setReservationCreated] = useState(false);
   const [occupiedSpaces, setOccupiedSpaces] = useState(0);
   const navigation = useNavigation();
   const [userData, setUserData] = useState();
   const [reservationDataInfo, setReservationDataInfo] = useState(null);
-  const { reservationCreatedParam } = route.params ?? {};
   const dispatch = useDispatch();
+
   useEffect(() => {
     if (route.params) {
       setReservationCreated(route.params.reservationCreatedParam);
@@ -40,7 +37,6 @@ const Reservation = ({ route }) => {
   }, []);
 
   useEffect(() => {
-    // Llamada a la API para obtener la reserva activa del usuario
     const checkReservation = async () => {
       try {
         const user_id = userData.id;
@@ -63,8 +59,11 @@ const Reservation = ({ route }) => {
   }, []);
 
   useEffect(() => {
+
     let timer;
     if (parkingData) {
+      fetchExtraFee();
+      fetchOccupiedSpaces();
       timer = setTimeout(() => {
         fetchExtraFee();
         fetchOccupiedSpaces();
@@ -76,6 +75,7 @@ const Reservation = ({ route }) => {
       }
     };
   }, [parkingData]);
+
   useEffect(() => {
     if (parkingData) {
       dataParkingUser();
@@ -110,14 +110,14 @@ const Reservation = ({ route }) => {
         setExtraFee(response.ExtraFee);
       }
     } catch (error) {
-      setExtraFee(400);
+      console.error("Error al obtener el precio extra:", error);
     }
   };
 
   const fetchOccupiedSpaces = async () => {
+
     try {
       const response = await agent.Parking.getOccupiedSpaces();
-      //console.log(response);
       if (response) {
         setOccupiedSpaces(response);
       }
@@ -153,7 +153,7 @@ const Reservation = ({ route }) => {
         parking_id: parking_id,
         user_id: user_id,
       });
-      console.log(status);
+      console.log("status: ", status);
       if (status !== null) {
         setReservationDataInfo(status);
         setReservationCreated(true);
@@ -188,7 +188,7 @@ const Reservation = ({ route }) => {
 
   const handleReservation = async () => {
     const parking_id = parkingData.id;
-
+    var entry_time = new Date().toLocaleString("es-CL");
     try {
       const status = await agent.Parking.getParkingUserData({
         parking_id: parking_id,
@@ -214,6 +214,7 @@ const Reservation = ({ route }) => {
           });
           setReservationDataInfo(status);
           setReservationCreated(true);
+          updateOccupiedSpaces();
         } else {
           console.error("Error al crear la reserva.");
         }
