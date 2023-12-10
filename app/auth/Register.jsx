@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { Text, View, ScrollView } from "react-native";
 import { StatusBar } from "expo-status-bar";
+import { login } from "../../navigators/userSlice";
+import { useDispatch } from "react-redux";
+import { useNavigation } from "@react-navigation/native";
 
 //Iconos
 import { Octicons, Ionicons } from "@expo/vector-icons";
@@ -35,32 +38,48 @@ import agent from "../../api/agent";
 //Colores
 const { brand, darkLight, green } = Colors;
 
-const Register = ( ) => {
+const Register = () => {
   const [hidePassword, setHidePassword] = useState(true);
   const [passwordMismatch, setPasswordMismatch] = useState(false);
+  const navigation = useNavigation();
   const handleSubmitButton = (data) => {
     if (data.password !== data.passwordConfirm) {
       setPasswordMismatch(true);
-      console.log("MAL")
+      ToastAndroid.show("Las contraseñas no coinciden", ToastAndroid.SHORT);
     } else {
       setPasswordMismatch(false);
-      console.log("BIEN")
+      console.log("BIEN");
       completeData(data);
     }
   };
   const completeData = (data) => {
     console.log(completeData);
+    if(data.name === "" || data.lastname === "" || data.email === "" || data.password === "" || data.passwordConfirm === ""){ 
+      ToastAndroid.show("Por favor complete todos los campos", ToastAndroid.SHORT);
+      return;
+    }
     agent.Login.register(data.name, data.lastname, data.email, data.password, 1)
       .then((response) => {
         console.log(response);
+        ToastAndroid.show("Usuario registrado", ToastAndroid.SHORT);
+        navigation.navigate("Iniciar sesión");
       })
       .catch((error) => {
-        let errorMessage = error.response.data.errors;
+        let errorResponse = error.response.data.errors;
+        let errorMessage = "Ha ocurrido un error.";
+        if (errorResponse.includes("Correo electrónico inválido.")) {
+          errorMessage = "Correo electrónico inválido.";
+        }
+        if (errorResponse.includes("El correo electrónico ya está en uso.")) {
+          errorMessage = "El correo electrónico ya está en uso.";
+        }
+        if (errorResponse.includes("Contraseña inválida. (min 8)")) {
+          errorMessage = "La contraseña debe tener al menos 8 caracteres.";
+        }
+
         console.log(errorMessage);
         console.log(error.response);
-      })
-      .finally(() => {
-        reset();
+        ToastAndroid.show(errorMessage, ToastAndroid.SHORT);
       });
   };
   return (
@@ -148,7 +167,12 @@ const Register = ( ) => {
                 <ExtraView>
                   <ExtraText>Ya estas registrado?</ExtraText>
                   <TextLink>
-                    <TextLinkContent onPress={(event) => navigation.navigate("Login")}> Inicia Sesión!</TextLinkContent>
+                    <TextLinkContent
+                      onPress={(event) => navigation.navigate("Iniciar sesión")}
+                    >
+                      {" "}
+                      Inicia Sesión!
+                    </TextLinkContent>
                   </TextLink>
                 </ExtraView>
               </StyledFormArea>

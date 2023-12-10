@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import agent from "../../api/agent";
-import { useNavigation, useFocusEffect } from "@react-navigation/native";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { jwtDecode } from "jwt-decode";
+import { useDispatch } from "react-redux";
+import { logout } from "../../navigators/userSlice";
 
 import {
   StyledContainer,
@@ -16,20 +18,16 @@ import {
 
 const Reservation = ({ route }) => {
   const [parkingData, setParkingData] = useState(null);
-  const [user_id, setUser_id] = useState();
-  const [entry_time, setEntryTime] = useState(new Date());
-  const [extraFee, setExtraFee] = useState(400);
+  const [extraFee, setExtraFee] = useState();
   const [reservationCreated, setReservationCreated] = useState(false);
   const [occupiedSpaces, setOccupiedSpaces] = useState(0);
   const navigation = useNavigation();
   const [userData, setUserData] = useState();
   const [reservationDataInfo, setReservationDataInfo] = useState(null);
-  const { reservationCreatedParam } = route.params ?? {};  
+  const dispatch = useDispatch();
 
   useEffect(() => {
-
     if (route.params) {
-      console.log("reserva", route.params);
       setReservationCreated(route.params.reservationCreatedParam);
     }
   }, [route.params]);
@@ -39,20 +37,18 @@ const Reservation = ({ route }) => {
   }, []);
 
   useEffect(() => {
-    // Llamada a la API para obtener la reserva activa del usuario
     const checkReservation = async () => {
       try {
         const user_id = userData.id;
-        const reservationResponse = await agent.Reservation.getReservationByUserId(user_id);
+        const reservationResponse =
+          await agent.Reservation.getReservationByUserId(user_id);
 
         if (reservationResponse !== null) {
           setReservationCreated(true);
         } else {
           setReservationCreated(false);
         }
-      } catch (error) {
-        console.error("Error al obtener la reserva:", error);
-      }
+      } catch (error) {}
     };
 
     checkReservation();
@@ -61,24 +57,35 @@ const Reservation = ({ route }) => {
   useEffect(() => {
     fetchParkingData();
   }, []);
-  
+
   useEffect(() => {
+
+    let timer;
     if (parkingData) {
       fetchExtraFee();
       fetchOccupiedSpaces();
+      timer = setTimeout(() => {
+        fetchExtraFee();
+        fetchOccupiedSpaces();
+      }, 300000);
     }
+    return () => {
+      if (timer) {
+        clearTimeout(timer);
+      }
+    };
   }, [parkingData]);
 
   useEffect(() => {
-    if(parkingData){
+    if (parkingData) {
       dataParkingUser();
     }
   }, [reservationDataInfo]);
 
   const handleGetToken = async () => {
-    const dataToken = await AsyncStorage.getItem('AccessToken');
+    const dataToken = await AsyncStorage.getItem("AccessToken");
     if (!dataToken) {
-      navigation.replace('Login');
+      navigation.replace("Login");
     } else {
       const decoded = jwtDecode(dataToken);
       setUserData(decoded);
@@ -92,9 +99,7 @@ const Reservation = ({ route }) => {
         const parkingInfo = response[0];
         setParkingData(parkingInfo);
       }
-    } catch (error) {
-      console.error("Error al obtener los datos del estacionamiento:", error);
-    }
+    } catch (error) {}
   };
 
   const fetchExtraFee = async () => {
@@ -105,21 +110,18 @@ const Reservation = ({ route }) => {
         setExtraFee(response.ExtraFee);
       }
     } catch (error) {
-      setExtraFee(500);
-      console.error("Error al obtener el extra_fee:", error);
+      console.error("Error al obtener el precio extra:", error);
     }
   };
 
   const fetchOccupiedSpaces = async () => {
+
     try {
       const response = await agent.Parking.getOccupiedSpaces();
-      //console.log(response);
       if (response) {
         setOccupiedSpaces(response);
       }
-    } catch (error) {
-      console.error("Error al obtener los espacios ocupados:", error);
-    }
+    } catch (error) {}
   };
 
   const getEmotion = () => {
@@ -146,25 +148,27 @@ const Reservation = ({ route }) => {
   const dataParkingUser = async () => {
     const parking_id = 1;
     const user_id = userData.id;
-    try{
-      const status = await agent.Parking.getParkingUserData({ parking_id: parking_id, user_id: user_id });
-      console.log(status);
-      if (status !== null){
+    try {
+      const status = await agent.Parking.getParkingUserData({
+        parking_id: parking_id,
+        user_id: user_id,
+      });
+      console.log("status: ", status);
+      if (status !== null) {
         setReservationDataInfo(status);
         setReservationCreated(true);
         return;
       }
-    } catch (error) {
-      console.error("Error al guardar la información:", error);
-    }
-  }
+    } catch (error) {}
+  };
 
   const handleGoToReservation = async () => {
     try {
       const user_id = userData.id;
 
       // Llamada a la API para obtener la reserva activa del usuario
-      const reservationResponse = await agent.Reservation.getReservationByUserId(user_id);
+      const reservationResponse =
+        await agent.Reservation.getReservationByUserId(user_id);
 
       if (reservationResponse !== null) {
         // Si se encuentra una reserva activa, navega a la pantalla de detalles de la reserva
@@ -174,22 +178,23 @@ const Reservation = ({ route }) => {
           parkingName: parkingData.name,
           userId: userData.id,
         };
-        navigation.navigate("ReservationInfo", { reservationDataInfo });
+        navigation.navigate("Detalle Reserva", { reservationDataInfo });
       } else {
         // Si no hay reserva activa, muestra un mensaje al usuario
         alert("No tienes una reserva activa en este momento.");
       }
-    } catch (error) {
-      console.error("Error al obtener la reserva:", error);
-    }
+    } catch (error) {}
   };
 
   const handleReservation = async () => {
     const parking_id = parkingData.id;
-
+    var entry_time = new Date().toLocaleString("es-CL");
     try {
-      const status = await agent.Parking.getParkingUserData({ parking_id: parking_id, user_id: userData.id });
-      if (status === null){
+      const status = await agent.Parking.getParkingUserData({
+        parking_id: parking_id,
+        user_id: userData.id,
+      });
+      if (status === null) {
         const response = await agent.Reservation.createReservation({
           user_id: userData.id,
           parking_id,
@@ -204,9 +209,12 @@ const Reservation = ({ route }) => {
             parkingName: parkingData.name,
             userId: userData.id,
           };
-          navigation.navigate("ReservationInfo", { reservationDataInfo: reservationDataInfo });
+          navigation.navigate("Detalle Reserva", {
+            reservationDataInfo: reservationDataInfo,
+          });
           setReservationDataInfo(status);
           setReservationCreated(true);
+          updateOccupiedSpaces();
         } else {
           console.error("Error al crear la reserva.");
         }
@@ -214,8 +222,16 @@ const Reservation = ({ route }) => {
         handleGoToReservation();
         return;
       }
+    } catch (error) {}
+  };
+
+  const handleLogout = async () => {
+    try {
+      dispatch(logout());
+      await AsyncStorage.removeItem("AccessToken");
+      navigation.replace("Iniciar sesión");
     } catch (error) {
-      console.error("Error al crear la reserva:", error);
+      console.error("Error al cerrar sesión:", error);
     }
   };
 
@@ -223,11 +239,9 @@ const Reservation = ({ route }) => {
     <View style={styles.container}>
       {parkingData ? (
         <>
-        <View>
-          <Text>
-            Bienvenido
-          </Text>
-        </View>
+          <View>
+            <Text>Bienvenido</Text>
+          </View>
           <View style={styles.emojiContainer}>
             <Text style={styles.emoji}>{getEmotion().emoji}</Text>
             <Text style={styles.emotionText}>{getEmotion().text}</Text>
@@ -236,36 +250,45 @@ const Reservation = ({ route }) => {
             <Text style={styles.pageTitle}>{parkingData.name}</Text>
             <Text style={styles.subTitle}>{parkingData.address}</Text>
             <Text style={styles.capacityText}>
-              Sitios ocupados: {occupiedSpaces}/{parkingData.floor_count * parkingData.places_per_floor}
+              Sitios ocupados: {occupiedSpaces}/
+              {parkingData.floor_count * parkingData.places_per_floor}
             </Text>
             <View style={styles.priceContainer}>
-              <Text style={styles.priceText}>
-                Precio por hora: ${extraFee}
-              </Text>
+              <Text style={styles.priceText}>Precio por hora: ${extraFee}</Text>
             </View>
             {reservationCreated ? (
-              <StyledButton style={styles.button} onPress={handleGoToReservation}>                
+              <StyledButton
+                style={styles.button}
+                onPress={handleGoToReservation}
+              >
                 <Text style={styles.buttonText}>Ir a mi reserva</Text>
               </StyledButton>
             ) : (
               <>
-                <StyledButton style={styles.button} onPress={handleReservation}>                
+                <StyledButton style={styles.button} onPress={handleReservation}>
                   <Text style={styles.buttonText}>Reservar</Text>
                 </StyledButton>
                 <Text>¡Reserve ahora!</Text>
-                <StyledButton style={styles.button} onPress={(event) => navigation.navigate("History")} >                
+                <StyledButton
+                  style={styles.button}
+                  onPress={(event) => navigation.navigate("Historial")}
+                >
                   <Text style={styles.buttonText}>Historial</Text>
                 </StyledButton>
-                
+                <StyledButton style={styles.button} onPress={handleLogout}>
+                  <Text style={styles.buttonText}>Cerrar sesión</Text>
+                </StyledButton>
               </>
-
-              
-              
             )}
           </View>
         </>
       ) : (
-        <Text>Cargando información del estacionamiento...</Text>
+        <>
+          <Text>Cargando información del estacionamiento...</Text>
+          <StyledButton style={styles.button} onPress={handleLogout}>
+            <Text style={styles.buttonText}>Cerrar sesión</Text>
+          </StyledButton>
+        </>
       )}
     </View>
   );
@@ -276,6 +299,9 @@ const styles = StyleSheet.create({
     flex: 1,
 
     alignItems: "center",
+  },
+  gifContainer: {
+    marginTop: 20,
   },
   emojiContainer: {
     alignItems: "center",
@@ -319,7 +345,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   button: {
-    backgroundColor: "#007BFF",
+    backgroundColor: "#10B981",
     padding: 12,
     alignItems: "center",
   },
