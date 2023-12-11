@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Text, View, ScrollView } from "react-native";
+import { Text, View, ScrollView, ToastAndroid, Platform, Alert} from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { login } from "../../navigators/userSlice";
 import { useDispatch } from "react-redux";
@@ -45,7 +45,14 @@ const Register = () => {
   const handleSubmitButton = (data) => {
     if (data.password !== data.passwordConfirm) {
       setPasswordMismatch(true);
-      ToastAndroid.show("Las contraseñas no coinciden", ToastAndroid.SHORT);
+      if(Platform.OS === 'android')
+      {
+        ToastAndroid.show("Las contraseñas no coinciden", ToastAndroid.SHORT);
+      } else
+      {
+        Alert.alert("Error","Las contraseñas no coinciden");
+      }
+ 
     } else {
       setPasswordMismatch(false);
       console.log("BIEN");
@@ -61,16 +68,29 @@ const Register = () => {
       data.password === "" ||
       data.passwordConfirm === ""
     ) {
+      if(Platform.OS === 'android')
+      {
       ToastAndroid.show(
         "Por favor complete todos los campos",
         ToastAndroid.SHORT
       );
       return;
+      } else
+      {
+        Alert.alert("Error","Por favor complete todos los campos");
+        return;
+      }
     }
     agent.Login.register(data.name, data.lastname, data.email, data.password, 1)
       .then((response) => {
         console.log(response);
-        ToastAndroid.show("Usuario registrado", ToastAndroid.SHORT);
+        if(Platform.OS === 'android')
+        {
+          ToastAndroid.show("Usuario registrado", ToastAndroid.SHORT);
+        } else
+        {
+          Alert.alert("Éxito","Usuario registrado");
+        }
         navigation.navigate("Iniciar sesión");
       })
       .catch((error) => {
@@ -86,9 +106,15 @@ const Register = () => {
           errorMessage = "La contraseña debe tener al menos 8 caracteres.";
         }
 
-        console.log(errorMessage);
-        console.log(error.response);
-        ToastAndroid.show(errorMessage, ToastAndroid.SHORT);
+
+        if(Platform.OS === 'android')
+        {
+          ToastAndroid.show(errorMessage, ToastAndroid.SHORT);
+        }
+        else
+        {
+          Alert.alert("Error",errorMessage);
+        }
       });
   };
   return (
