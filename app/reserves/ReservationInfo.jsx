@@ -1,16 +1,13 @@
 //import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import QRCode from 'react-native-qrcode-svg';
+import QRCode from "react-native-qrcode-svg";
 import agent from "../../api/agent";
 import React, { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useSelector, useDispatch } from "redux";
 
-
-import {
-  StyledButton,
-} from "../../components/styles";
+import { StyledButton } from "../../components/styles";
 
 const ReservationInfo = ({ route }) => {
   // Obten los datos de la reserva de las props
@@ -18,7 +15,9 @@ const ReservationInfo = ({ route }) => {
   const navigation = useNavigation();
 
   // Formatear la hora de entrada
-  var entryTime = new Date(reservationDataInfo.response.entry_time).toLocaleString("es-CL");
+  var entryTime = new Date(
+    reservationDataInfo.response.entry_time
+  ).toLocaleString("es-CL");
   // Combina toda la información en una cadena que se incluirá en el código QR
   const qrData = `Usuario: ${reservationDataInfo.userName}\nEstacionamiento: ${reservationDataInfo.parkingName}\nHora de entrada: ${entryTime}\nCosto por hora: $${reservationDataInfo.response.extra_fee}`;
 
@@ -27,16 +26,18 @@ const ReservationInfo = ({ route }) => {
   }, []);
 
   const handleGetToken = async () => {
-    const dataToken = await AsyncStorage.getItem('AccessToken');
+    const dataToken = await AsyncStorage.getItem("AccessToken");
     if (!dataToken) {
-      navigation.replace('Login');
+      navigation.replace("Login");
     }
   };
   const Payment = async () => {
     try {
       const response = await agent.Parking.registerPayment({
-        user_id: reservationDataInfo.userId
+        user_id: reservationDataInfo.userId,
       });
+
+      console.log(reservationDataInfo);
 
       navigation.navigate("Pago", { reservationDataInfo: reservationDataInfo });
     } catch (error) {
@@ -62,7 +63,9 @@ const ReservationInfo = ({ route }) => {
       </View>
       <View style={styles.infoContainer}>
         <Text style={styles.label}>Costo por hora:</Text>
-        <Text style={styles.value}>${reservationDataInfo.response.extra_fee}</Text>
+        <Text style={styles.value}>
+          ${reservationDataInfo.response.extra_fee}
+        </Text>
       </View>
       <View style={styles.space} />
       <View style={styles.qrContainer}>
@@ -89,7 +92,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   qrContainer: {
-    alignItems: 'center', // Centra el código QR
+    alignItems: "center", // Centra el código QR
   },
   infoContainer: {
     flexDirection: "row",

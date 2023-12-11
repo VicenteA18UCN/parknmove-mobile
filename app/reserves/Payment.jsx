@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { View, Text, Image, StyleSheet } from "react-native";
 import agent from "../../api/agent";
 import { useNavigation } from "@react-navigation/native";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   StyledContainer,
   InnerContainer,
@@ -13,29 +13,35 @@ import {
 } from "../../components/styles";
 
 const Payment = ({ route }) => {
-
   const { reservationDataInfo } = route.params;
   const navigation = useNavigation();
   const [parkingUserData, setParkingData] = useState(null);
 
   useEffect(() => {
-    
     handleGetToken();
   }, []);
 
   const handleGetToken = async () => {
-    const dataToken = await AsyncStorage.getItem('AccessToken');
+    const dataToken = await AsyncStorage.getItem("AccessToken");
     if (!dataToken) {
-      navigation.replace('Login');
+      navigation.replace("Login");
     }
   };
   const fetchParkingData = async () => {
     try {
-      const entryTime = new Date(reservationDataInfo.response.entry_time).toLocaleString("es-CL");
+      const entryTime = new Date(
+        reservationDataInfo.response.entry_time
+      ).toLocaleString("es-CL");
       const exitTime = new Date().toLocaleString("es-CL");
-      const calculateFinalPayment = await agent.Parking.calculateFinalPayment( {reservationDataInfo: reservationDataInfo} );
+      const calculateFinalPayment = await agent.Parking.calculateFinalPayment({
+        reservationDataInfo: reservationDataInfo,
+      });
 
-      setParkingData({ total_price: calculateFinalPayment, entry_time: entryTime, exit_time: exitTime });
+      setParkingData({
+        total_price: calculateFinalPayment,
+        entry_time: entryTime,
+        exit_time: exitTime,
+      });
     } catch (error) {
       console.error("Error al obtener los datos del estacionamiento:", error);
     }
@@ -45,7 +51,7 @@ const Payment = ({ route }) => {
     fetchParkingData();
 
     setTimeout(() => {
-      navigation.navigate('Reserva', { reservationCreated: false });
+      navigation.navigate("Reserva", { reservationCreated: false });
     }, 2000);
   }, []);
 
@@ -55,15 +61,21 @@ const Payment = ({ route }) => {
       <Text style={styles.title}>Detalles del Pago</Text>
       <View style={styles.infoContainer}>
         <Text style={styles.label}>Precio a pagar:</Text>
-        <Text style={styles.value}>${parkingUserData ? parkingUserData.total_price : "Cargando"}</Text>
+        <Text style={styles.value}>
+          ${parkingUserData ? parkingUserData.total_price : "Cargando"}
+        </Text>
       </View>
       <View style={styles.infoContainer}>
         <Text style={styles.label}>Hora entrada:</Text>
-        <Text style={styles.value}>{parkingUserData ? parkingUserData.entry_time : "Cargando"}</Text>
+        <Text style={styles.value}>
+          {parkingUserData ? parkingUserData.entry_time : "Cargando"}
+        </Text>
       </View>
       <View style={styles.infoContainer}>
         <Text style={styles.label}>Hora salida:</Text>
-        <Text style={styles.value}>{parkingUserData ? parkingUserData.exit_time : "Cargando"}</Text>
+        <Text style={styles.value}>
+          {parkingUserData ? parkingUserData.exit_time : "Cargando"}
+        </Text>
       </View>
     </View>
   );
@@ -80,7 +92,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   qrContainer: {
-    alignItems: 'center', // Centra el código QR
+    alignItems: "center", // Centra el código QR
   },
   infoContainer: {
     flexDirection: "row",

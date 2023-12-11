@@ -57,9 +57,7 @@ const Login = ({ navigation }) => {
         if (response.token) {
           await AsyncStorage.setItem("AccessToken", response.token);
           dispatch(login(response.token));
-          console.log(response.token);
           navigation.replace("Reserva");
-          console.log("Login correcto");
         }
       })
       .catch((err) => {
@@ -86,9 +84,9 @@ const Login = ({ navigation }) => {
           {({ handleChange, handleBlur, handleSubmit, values }) => (
             <StyledFormArea>
               <MyTextInput
-                label="Email"
+                label="Correo Electrónico"
                 icon="mail"
-                placeholder="a@gmail.com"
+                placeholder="ejemplo@dominio.com"
                 placeholderTextColor={darkLight}
                 onChangeText={handleChange("email")}
                 onBlur={handleBlur("email")}
@@ -120,7 +118,12 @@ const Login = ({ navigation }) => {
               <ExtraView>
                 <ExtraText>No tienes una cuenta?</ExtraText>
                 <TextLink>
-                  <TextLinkContent onPress={(event) => navigation.navigate("Registrar")}> Registrate!</TextLinkContent>
+                  <TextLinkContent
+                    onPress={(event) => navigation.navigate("Registrar")}
+                  >
+                    {" "}
+                    Registrate!
+                  </TextLinkContent>
                 </TextLink>
               </ExtraView>
             </StyledFormArea>

@@ -54,8 +54,17 @@ const Register = () => {
   };
   const completeData = (data) => {
     console.log(completeData);
-    if(data.name === "" || data.lastname === "" || data.email === "" || data.password === "" || data.passwordConfirm === ""){ 
-      ToastAndroid.show("Por favor complete todos los campos", ToastAndroid.SHORT);
+    if (
+      data.name === "" ||
+      data.lastname === "" ||
+      data.email === "" ||
+      data.password === "" ||
+      data.passwordConfirm === ""
+    ) {
+      ToastAndroid.show(
+        "Por favor complete todos los campos",
+        ToastAndroid.SHORT
+      );
       return;
     }
     agent.Login.register(data.name, data.lastname, data.email, data.password, 1)
@@ -87,7 +96,6 @@ const Register = () => {
       <StatusBar style="dark" />
       <ScrollView>
         <InnerContainer>
-          <Title>ParknMove</Title>
           <SubTitle>¡Registrate!</SubTitle>
           <Formik
             initialValues={{
@@ -107,7 +115,7 @@ const Register = () => {
                 <MyTextInput
                   label="Nombre"
                   icon="note"
-                  placeholder=""
+                  placeholder="Ingrese su nombre"
                   placeholderTextColor={darkLight}
                   onChangeText={handleChange("name")}
                   onBlur={handleBlur("name")}
@@ -118,7 +126,7 @@ const Register = () => {
                 <MyTextInput
                   label="Apellido"
                   icon="note"
-                  placeholder=""
+                  placeholder="Ingrese su apellido"
                   placeholderTextColor={darkLight}
                   onChangeText={handleChange("lastname")}
                   onBlur={handleBlur("lastname")}
@@ -126,7 +134,7 @@ const Register = () => {
                   isPassword={false}
                 />
                 <MyTextInput
-                  label="Correo electronico"
+                  label="Correo Electrónico"
                   icon="mail"
                   placeholder="ejemplo@dominio.com"
                   placeholderTextColor={darkLight}
@@ -138,7 +146,7 @@ const Register = () => {
                 />
 
                 <MyTextInput
-                  label="Password"
+                  label="Contraseña"
                   icon="lock"
                   placeholder="**********"
                   placeholderTextColor={darkLight}
