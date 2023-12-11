@@ -18,8 +18,6 @@ const ReservationInfo = ({ route }) => {
   var entryTime = new Date(
     reservationDataInfo.response.entry_time
   ).toLocaleString("es-CL");
-  // Combina toda la información en una cadena que se incluirá en el código QR
-  const qrData = `Usuario: ${reservationDataInfo.userName}\nEstacionamiento: ${reservationDataInfo.parkingName}\nHora de entrada: ${entryTime}\nCosto por hora: $${reservationDataInfo.response.extra_fee}`;
 
   useEffect(() => {
     handleGetToken();
@@ -62,15 +60,12 @@ const ReservationInfo = ({ route }) => {
         <Text style={styles.value}>{entryTime}</Text>
       </View>
       <View style={styles.infoContainer}>
-        <Text style={styles.label}>Costo por hora:</Text>
+        <Text style={styles.label}>Costo por segundo:</Text>
         <Text style={styles.value}>
           ${reservationDataInfo.response.extra_fee}
         </Text>
       </View>
       <View style={styles.space} />
-      <View style={styles.qrContainer}>
-        <QRCode value={qrData} size={200} />
-      </View>
       <View>
         <Text style={styles.space}> </Text>
         <StyledButton style={styles.button} onPress={() => Payment()}>

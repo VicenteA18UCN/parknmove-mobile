@@ -252,7 +252,7 @@ const Reservation = ({ route }) => {
               {parkingData.floor_count * parkingData.places_per_floor}
             </Text>
             <View style={styles.priceContainer}>
-              <Text style={styles.priceText}>Precio por hora: ${extraFee}</Text>
+              <Text style={styles.priceText}>Precio por segundo: ${extraFee}</Text>
             </View>
             {reservationCreated ? (
               <StyledButton

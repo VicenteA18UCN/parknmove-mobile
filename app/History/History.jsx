@@ -46,6 +46,7 @@ const ReservationHistory = () => {
 
   useEffect(() => {
     fetchHistory();
+    setFilteredReservations(Reservations);
   }, []);
 
   useEffect(() => {

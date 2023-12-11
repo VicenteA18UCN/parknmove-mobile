@@ -1,6 +1,6 @@
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-axios.defaults.baseURL = "http://192.168.0.2:4000/"; //Cambiar dependiendo de la ip de la computadora
+axios.defaults.baseURL = "https://parknmovebackend.azurewebsites.net/"; //Cambiar dependiendo de la ip de la computadora
 
 axios.defaults.withCredentials = true;
 
