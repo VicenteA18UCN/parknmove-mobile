@@ -5,6 +5,11 @@ import { Colors } from "./../components/styles";
 const { primary, tertiary } = Colors;
 import { Icon } from "react-native-elements";
 import { Image } from "react-native";
+import { logout } from "./userSlice";
+import { useDispatch } from "react-redux";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { View } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
 const Stack = createStackNavigator();
 // Importa las pantallas necesarias
@@ -19,6 +24,19 @@ import { selectId } from "./userSlice";
 
 function RootStack() {
   const isAuth = useSelector(selectId);
+  const dispatch = useDispatch();
+
+  const handleLogout = async (navigation) => {
+    try {
+      console.log("cerrando sesión");
+      dispatch(logout());
+      await AsyncStorage.removeItem("AccessToken");
+      navigation.replace("Iniciar sesión");
+      console.log("sesión cerrada");
+    } catch (error) {
+      console.error("Error al cerrar sesión:", error);
+    }
+  };
 
   return (
     <NavigationContainer>
@@ -50,13 +68,24 @@ function RootStack() {
           options={({ navigation }) => ({
             headerTitle: "Reserva",
             headerRight: () => (
-              <Icon
-                name="history"
-                type="font-awesome"
-                color="#fff"
-                onPress={() => navigation.navigate("Historial")}
-                containerStyle={{ marginRight: 10 }}
-              />
+              <View style={{ flexDirection: "row" }}>
+                <Icon
+                  name="history"
+                  type="font-awesome"
+                  color="#fff"
+                  onPress={() => navigation.navigate("Historial")}
+                  containerStyle={{ marginRight: 10 }}
+                />
+                <Icon
+                  name="sign-out"
+                  type="font-awesome"
+                  color="#ff0000"
+                  onPress={() => {
+                    handleLogout(navigation);
+                  }}
+                  containerStyle={{ marginRight: 10 }}
+                />
+              </View>
             ),
             headerLeft: () => (
               <Image

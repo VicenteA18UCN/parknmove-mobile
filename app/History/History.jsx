@@ -53,9 +53,9 @@ const ReservationHistory = () => {
   }, []);
 
   const handleGetToken = async () => {
-    const dataToken = await AsyncStorage.getItem('AccessToken');
+    const dataToken = await AsyncStorage.getItem("AccessToken");
     if (!dataToken) {
-      navigation.replace('Login');
+      navigation.replace("Login");
     } else {
       const decoded = jwtDecode(dataToken);
       setUserData(decoded);
@@ -99,9 +99,9 @@ const ReservationHistory = () => {
 
   const fetchHistory = async () => {
     try {
-    const dataToken = await AsyncStorage.getItem('AccessToken'); 
-    const decoded = jwtDecode(dataToken);
-    const response = await agent.Parking.getHistory(decoded.id);
+      const dataToken = await AsyncStorage.getItem("AccessToken");
+      const decoded = jwtDecode(dataToken);
+      const response = await agent.Parking.getHistory(decoded.id);
       if (Reservations.length === 0) {
         setReservations(response.history);
       }
@@ -122,7 +122,6 @@ const ReservationHistory = () => {
       <Text style={{ textAlign: "center", fontSize: 20, marginBottom: 20 }}>
         Historial de Reservas
       </Text>
-
       <View
         style={{
           flexDirection: "column",
@@ -130,31 +129,31 @@ const ReservationHistory = () => {
           marginBottom: 20,
         }}
       >
-        <View style={{ flexDirection: "row" }}>
+        <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
           <StyledButton
             onPress={() => changeInterval("todos")}
-            style={buttonStyle}
+            style={{ ...buttonStyle, margin: 2, width: 100 }}
           >
             <ButtonText>Todos</ButtonText>
           </StyledButton>
           <StyledButton
             onPress={() => changeInterval("ultimoMes")}
-            style={buttonStyle}
+            style={{ ...buttonStyle, margin: 2, width: 100 }}
           >
             <ButtonText>Mensual</ButtonText>
           </StyledButton>
         </View>
 
-        <View style={{ flexDirection: "row" }}>
+        <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
           <StyledButton
             onPress={() => changeInterval("ultimaSemana")}
-            style={buttonStyle}
+            style={{ ...buttonStyle, margin: 2, width: 100 }}
           >
             <ButtonText>Semanal</ButtonText>
           </StyledButton>
           <StyledButton
             onPress={() => changeInterval("ultimoAnio")}
-            style={buttonStyle}
+            style={{ ...buttonStyle, margin: 2, width: 100 }}
           >
             <ButtonText>Anual</ButtonText>
           </StyledButton>
@@ -184,7 +183,12 @@ const ReservationHistory = () => {
                   {new Date(reservation.entry_time).toLocaleTimeString()}
                 </Text>
                 <Text style={styles.tableCell}>
-                  {reservation.extra_fee + reservation.total_price}
+                  {(
+                    reservation.extra_fee + reservation.total_price
+                  ).toLocaleString("es-CL", {
+                    style: "currency",
+                    currency: "CLP",
+                  })}
                 </Text>
               </View>
             ))}
@@ -192,7 +196,7 @@ const ReservationHistory = () => {
         </ScrollView>
       ) : (
         <View style={{ alignItems: "center" }}>
-          <Text>No reservations found.</Text>
+          <Text>No hay reservas que mostrar.</Text>
         </View>
       )}
     </View>

@@ -59,7 +59,6 @@ const Reservation = ({ route }) => {
   }, []);
 
   useEffect(() => {
-
     let timer;
     if (parkingData) {
       fetchExtraFee();
@@ -115,7 +114,6 @@ const Reservation = ({ route }) => {
   };
 
   const fetchOccupiedSpaces = async () => {
-
     try {
       const response = await agent.Parking.getOccupiedSpaces();
       if (response) {
@@ -269,15 +267,6 @@ const Reservation = ({ route }) => {
                   <Text style={styles.buttonText}>Reservar</Text>
                 </StyledButton>
                 <Text>¡Reserve ahora!</Text>
-                <StyledButton
-                  style={styles.button}
-                  onPress={(event) => navigation.navigate("Historial")}
-                >
-                  <Text style={styles.buttonText}>Historial</Text>
-                </StyledButton>
-                <StyledButton style={styles.button} onPress={handleLogout}>
-                  <Text style={styles.buttonText}>Cerrar sesión</Text>
-                </StyledButton>
               </>
             )}
           </View>
@@ -285,9 +274,6 @@ const Reservation = ({ route }) => {
       ) : (
         <>
           <Text>Cargando información del estacionamiento...</Text>
-          <StyledButton style={styles.button} onPress={handleLogout}>
-            <Text style={styles.buttonText}>Cerrar sesión</Text>
-          </StyledButton>
         </>
       )}
     </View>
@@ -341,7 +327,7 @@ const styles = StyleSheet.create({
   },
   priceText: {
     fontSize: 20,
-    color: "#007BFF",
+    color: "#276953",
     marginLeft: 10,
   },
   button: {
