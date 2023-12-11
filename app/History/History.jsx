@@ -184,7 +184,7 @@ const ReservationHistory = () => {
                 </Text>
                 <Text style={styles.tableCell}>
                   {(
-                    reservation.extra_fee + reservation.total_price
+                    reservation.total_price
                   ).toLocaleString("es-CL", {
                     style: "currency",
                     currency: "CLP",

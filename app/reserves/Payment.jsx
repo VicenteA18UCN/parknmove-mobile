@@ -36,7 +36,6 @@ const Payment = ({ route }) => {
       const calculateFinalPayment = await agent.Parking.calculateFinalPayment({
         reservationDataInfo: reservationDataInfo,
       });
-
       setParkingData({
         total_price: calculateFinalPayment,
         entry_time: entryTime,
