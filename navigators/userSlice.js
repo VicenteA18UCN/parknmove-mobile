@@ -1,5 +1,6 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 import { jwtDecode } from "jwt-decode";
+import "core-js/stable/atob";
 
 const initialState = {
   id: null,
@@ -9,11 +10,12 @@ const initialState = {
   token: null,
 };
 
-export const index = createSlice({
-  name: "user",
+export const userSlice = createSlice({
+  name: "account",
   initialState,
   reducers: {
     login: (state, action) => {
+      console.log(action.payload);
       const payload = jwtDecode(action.payload);
       state.id = payload.id;
       state.name = payload.name;
@@ -37,4 +39,4 @@ export const selectName = (state) => state.user.name;
 export const selectLastname = (state) => state.user.lastname;
 export const selectEmail = (state) => state.user.email;
 
-export const { login, logout } = index.actions;
+export const { login, logout } = userSlice.actions;
